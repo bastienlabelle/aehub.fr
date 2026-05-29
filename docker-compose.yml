@@ -1,0 +1,86 @@
+# docker-compose.yml
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    networks:
+      - internal
+    labels:
+      - traefik.enable=false
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  cache:
+    image: redis:7-alpine
+    restart: unless-stopped
+    networks:
+      - internal
+    labels:
+      - traefik.enable=false
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
+  adminer:
+    image: adminer:latest
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ADMINER_DEFAULT_SERVER: db
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.fr-aehub-adminer.rule=Host(`${ADMINER_HOST}`)
+      - traefik.http.routers.fr-aehub-adminer.entrypoints=websecure
+      - traefik.http.routers.fr-aehub-adminer.tls.certresolver=letsencrypt
+      - traefik.http.services.fr-aehub-adminer.loadbalancer.server.port=8080
+    networks:
+      - internal
+      - web
+
+  api:
+    build:
+      context: .
+      dockerfile: ./docker/api/Dockerfile
+      target: ${ENV}
+    volumes:
+      - ./backend:/app
+      - ./logs:/logs
+      - ./.env:/app/.env
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      - REDIS_URL=redis://cache:6379
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.fr-aehub-api.rule=Host(`${FASTAPI_HOST}`)
+      - traefik.http.routers.fr-aehub-api.entrypoints=websecure
+      - traefik.http.routers.fr-aehub-api.tls.certresolver=letsencrypt
+      - traefik.http.services.fr-aehub-api.loadbalancer.server.port=8000
+    networks:
+      - internal
+      - web
+
+networks:
+  web:
+    external: true
+    name: web
+  internal:
+    external: false

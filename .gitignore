@@ -1,0 +1,7 @@
+docker-compose.override.yml
+.DS_Store
+.env
+docker-compose.override.yml
+data/
+logs/*
+__pycache__
