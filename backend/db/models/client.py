@@ -19,6 +19,7 @@ class Client(Base):
     zip_code: Mapped[str | None] = mapped_column(String, nullable=True)
     city: Mapped[str | None] = mapped_column(String, nullable=True)
     siret: Mapped[str | None] = mapped_column(String(14), nullable=True)
+    siren: Mapped[str | None] = mapped_column(String(9), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now())
 

@@ -11,6 +11,7 @@ class ClientCreate(BaseModel):
     zip_code: str | None = None
     city: str | None = None
     siret: str | None = None
+    siren: str | None = None
 
 
 class ClientUpdate(BaseModel):
@@ -22,6 +23,7 @@ class ClientUpdate(BaseModel):
     zip_code: str | None = None
     city: str | None = None
     siret: str | None = None
+    siren: str | None = None
 
 
 class ClientResponse(BaseModel):
@@ -35,6 +37,7 @@ class ClientResponse(BaseModel):
     zip_code: str | None
     city: str | None
     siret: str | None
+    siren: str | None = None
     created_at: datetime
     updated_at: datetime
 
