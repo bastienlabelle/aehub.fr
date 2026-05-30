@@ -1,6 +1,6 @@
 # db/models/user.py
 from datetime import datetime
-from sqlalchemy import String, Integer, DateTime, func
+from sqlalchemy import String, Integer, DateTime, LargeBinary, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from db.base import Base
@@ -22,7 +22,7 @@ class User(Base):
     email: Mapped[str] = mapped_column(String, nullable=False, unique=True)
     website: Mapped[str | None] = mapped_column(String, nullable=True)
     iban: Mapped[str | None] = mapped_column(String, nullable=True)
-    password: Mapped[str] = mapped_column(String, nullable=False)
+    password: Mapped[bytes] = mapped_column(LargeBinary, nullable=False)
     invoice_counter: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     quote_counter: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     payment_counter: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
