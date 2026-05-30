@@ -26,5 +26,5 @@ class Invoice(Base):
     user: Mapped["User"] = relationship(back_populates="invoices")
     client: Mapped["Client"] = relationship(back_populates="invoices")
     quote: Mapped["Quote"] = relationship(back_populates="invoices")
-    lines: Mapped[list["Line"]] = relationship(back_populates="invoice")
+    lines: Mapped[list["Line"]] = relationship("Line", back_populates="invoice", cascade="all, delete-orphan")
     payments: Mapped[list["InvoicePayment"]] = relationship(back_populates="invoice")

@@ -25,4 +25,4 @@ class Quote(Base):
     user: Mapped["User"] = relationship(back_populates="quotes")
     client: Mapped["Client"] = relationship(back_populates="quotes")
     invoices: Mapped[list["Invoice"]] = relationship(back_populates="quote")
-    lines: Mapped[list["Line"]] = relationship(back_populates="quote")
+    lines: Mapped[list["Line"]] = relationship(back_populates="quote", cascade="all, delete-orphan")
