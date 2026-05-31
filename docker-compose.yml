@@ -80,6 +80,28 @@ services:
       - internal
       - web
 
+  # frontend:
+  #   build:
+  #     context: .
+  #     dockerfile: ./docker/frontend/Dockerfile
+  #     target: ${ENV}
+  #   volumes:
+  #     - ./frontend:/app
+  #     - /app/node_modules
+  #     - /app/.nuxt
+  #   depends_on:
+  #     - api
+  #   restart: unless-stopped
+  #   labels:
+  #     - traefik.enable=true
+  #     - traefik.http.routers.fr-aehub.rule=Host(`${FRONTEND_HOST}`)
+  #     - traefik.http.routers.fr-aehub.entrypoints=websecure
+  #     - traefik.http.routers.fr-aehub.tls.certresolver=letsencrypt
+  #     - traefik.http.services.fr-aehub.loadbalancer.server.port=3000
+  #   networks:
+  #     - internal
+  #     - web
+
 networks:
   web:
     external: true
