@@ -8,9 +8,13 @@ from db.models.user import User
 from auth.hashing import hash_password, verify_password
 from auth.jwt import create_access_token
 from schemas.user import UserRegister, UserResponse, TokenResponse
+from auth.dependencies import get_current_user
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
+@router.get("/me", response_model=UserResponse)
+async def me(current_user: User = Depends(get_current_user)):
+    return current_user
 
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 async def register(payload: UserRegister, db: AsyncSession = Depends(get_db)):
