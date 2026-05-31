@@ -1,4 +1,8 @@
 @import "tailwindcss";
 @plugin "daisyui" {
-  themes: cupcake, coffee;
+  themes: emerald, dark;
+}
+
+.btn, .badge {
+  @apply rounded-lg;
 }

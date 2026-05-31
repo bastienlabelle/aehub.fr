@@ -37,7 +37,7 @@
               <th>Nom / Société</th>
               <th>Email</th>
               <th>Ville</th>
-              <th>SIRET</th>
+              <th>SIREN</th>
               <th></th>
             </tr>
           </thead>
@@ -49,7 +49,7 @@
               </td>
               <td class="text-sm text-base-content/70">{{ client.email }}</td>
               <td class="text-sm text-base-content/70">{{ client.city ?? '—' }}</td>
-              <td class="text-sm text-base-content/70 font-mono">{{ client.siret ?? '—' }}</td>
+              <td class="text-sm text-base-content/70 font-mono">{{ client.siren ?? '—' }}</td>
               <td class="text-right">
                 <div class="flex justify-end gap-1">
                   <NuxtLink :to="`/clients/${client.id}`" class="btn btn-ghost btn-xs">
