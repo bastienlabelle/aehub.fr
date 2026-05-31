@@ -120,7 +120,7 @@ import { useMediaQuery } from '@vueuse/core'
 // Theme
 const prefersDark = useMediaQuery('(prefers-color-scheme: dark)')
 const isDark = ref(prefersDark.value)
-const currentTheme = computed(() => isDark.value ? 'coffee' : 'retro')
+const currentTheme = computed(() => isDark.value ? 'coffee' : 'cupcake')
 
 watch(prefersDark, (val) => { isDark.value = val })
 
