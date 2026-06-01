@@ -30,6 +30,13 @@ def quote_select(user_id: int):
     )
 
 
+@router.get("/next-number", response_model=dict)
+async def next_quote_number(current_user: User = Depends(get_current_user)):
+    from datetime import date
+    year = date.today().year
+    number = f"D{year}-{(current_user.quote_counter + 1):03d}"
+    return {"number": number}
+
 @router.get("/", response_model=list[QuoteResponse])
 async def list_quotes(
     db: AsyncSession = Depends(get_db),

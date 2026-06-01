@@ -21,6 +21,11 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
             <div class="form-control">
+              <label class="label"><span class="label-text font-medium">Numéro</span></label>
+              <input :value="nextNumber" type="text" class="input input-bordered font-mono" disabled />
+            </div>
+            
+            <div class="form-control">
               <label class="label"><span class="label-text font-medium">Client <span class="text-error">*</span></span></label>
               <select v-model="form.client_id" class="select select-bordered" :class="{ 'select-error': errors.client_id }">
                 <option disabled value="">Sélectionner un client</option>
@@ -210,9 +215,14 @@ async function submit() {
   }
 }
 
+const nextNumber = ref('')
+
 onMounted(async () => {
-  clients.value = await $fetch('/api/clients/', {
-    headers: { Authorization: `Bearer ${token.value}` }
-  })
+  const [fetchedClients, { number }] = await Promise.all([
+    $fetch<any[]>('/api/clients/', { headers: { Authorization: `Bearer ${token.value}` } }),
+    $fetch<any>('/api/quotes/next-number', { headers: { Authorization: `Bearer ${token.value}` } }),
+  ])
+  clients.value = fetchedClients
+  nextNumber.value = number
 })
 </script>
