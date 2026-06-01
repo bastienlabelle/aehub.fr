@@ -47,7 +47,8 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
               </label>
-              <ul tabindex="0" class="dropdown-content menu menu-sm shadow-lg bg-base-100 rounded-box w-48 mt-2 border border-base-200">
+              <ul tabindex="0" class="dropdown-content menu menu-sm shadow-lg bg-base-100 text-base-content rounded-box w-48 mt-2 border border-base-200">
+                <li><NuxtLink to="/settings">Préférences</NuxtLink></li>
                 <li><a @click="logout" class="text-error">Se déconnecter</a></li>
               </ul>
             </div>
@@ -168,6 +169,10 @@ const menuItems = [
 const route = useRoute()
 
 const pageTitle = computed(() => {
+  const extraTitles: Record<string, string> = {
+    '/settings': 'Préférences',
+  }
+  if (extraTitles[route.path]) return extraTitles[route.path]
   const match = menuItems.find(item =>
     item.exact ? route.path === item.to : route.path.startsWith(item.to)
   )

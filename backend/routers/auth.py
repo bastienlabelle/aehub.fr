@@ -7,13 +7,25 @@ from db.session import get_db
 from db.models.user import User
 from auth.hashing import hash_password, verify_password
 from auth.jwt import create_access_token
-from schemas.user import UserRegister, UserResponse, TokenResponse
+from schemas.user import UserRegister, UserResponse, UserUpdate, TokenResponse
 from auth.dependencies import get_current_user
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 @router.get("/me", response_model=UserResponse)
 async def me(current_user: User = Depends(get_current_user)):
+    return current_user
+
+@router.patch("/me", response_model=UserResponse)
+async def update_me(
+    payload: UserUpdate,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    for key, value in payload.model_dump(exclude_unset=True).items():
+        setattr(current_user, key, value)
+    await db.commit()
+    await db.refresh(current_user)
     return current_user
 
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)

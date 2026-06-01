@@ -45,6 +45,19 @@ class UserResponse(BaseModel):
 
     model_config = {"from_attributes": True}
 
+class UserUpdate(BaseModel):
+    company_name: str | None = None
+    first_name: str | None = None
+    last_name: str | None = None
+    siren: str | None = None
+    siret: str | None = None
+    address: str | None = None
+    zip_code: str | None = None
+    city: str | None = None
+    phone: str | None = None
+    email: EmailStr | None = None
+    website: str | None = None
+    iban: str | None = None
 
 class TokenResponse(BaseModel):
     access_token: str
