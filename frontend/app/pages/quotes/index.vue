@@ -18,51 +18,49 @@
     </div>
 
     <!-- Empty -->
-    <div v-else-if="quotes.length === 0" class="card bg-base-100 border border-base-300">
-      <div class="card-body items-center text-center py-16">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-base-content/20 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-        </svg>
-        <p class="text-base-content/40 font-medium">Aucun devis pour l'instant</p>
-        <NuxtLink to="/quotes/new" class="btn btn-primary btn-sm mt-4">Créer un devis</NuxtLink>
-      </div>
+    <div v-else-if="quotes.length === 0" class="py-16 flex flex-col items-center text-center">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-base-content/20 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+      <p class="text-base-content/40 font-medium">Aucun devis pour l'instant</p>
+      <NuxtLink to="/quotes/new" class="btn btn-primary btn-sm mt-4">Créer un devis</NuxtLink>
     </div>
 
     <!-- Table -->
-    <div v-else class="card bg-base-100 border border-base-300 overflow-hidden">
-      <div class="overflow-x-auto">
-        <table class="table table-zebra">
-          <thead>
-            <tr class="bg-base-200 text-base-content/60 text-xs uppercase tracking-wider">
-              <th>Numéro</th>
-              <th>Client</th>
-              <th>Objet</th>
-              <th>Date</th>
-              <th>Validité</th>
-              <th>Statut</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="quote in quotes" :key="quote.id" class="hover">
-              <td class="font-mono text-sm font-medium">{{ quote.number }}</td>
-              <td class="text-sm text-base-content/70">{{ quote.client.name }}</td>
-              <td class="text-sm text-base-content/70">{{ quote.subject ?? '—' }}</td>
-              <td class="text-sm text-base-content/70">{{ formatDate(quote.issued_at) }}</td>
-              <td class="text-sm text-base-content/70">{{ quote.valid_until ? formatDate(quote.valid_until) : '—' }}</td>
-              <td>
-                <span class="badge badge-sm" :class="statusClass(quote.status)">{{ statusLabel(quote.status) }}</span>
-              </td>
-              <td class="text-right">
-                <div class="flex justify-end gap-1">
-                  <NuxtLink :to="`/quotes/${quote.id}`" class="btn btn-ghost btn-xs">Modifier</NuxtLink>
-                  <button class="btn btn-ghost btn-xs text-error" @click="confirmDelete(quote)">Supprimer</button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <div v-else class="overflow-x-auto">
+
+      <table class="table table-zebra">
+        <thead>
+          <tr class="text-base-content/60 text-xs uppercase tracking-wider">
+            <th>Numéro</th>
+            <th>Client</th>
+            <th>Objet</th>
+            <th>Date</th>
+            <th>Validité</th>
+            <th>Statut</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="quote in quotes" :key="quote.id" class="hover">
+            <td class="font-mono text-sm font-medium">{{ quote.number }}</td>
+            <td class="text-sm text-base-content/70">{{ quote.client.name }}</td>
+            <td class="text-sm text-base-content/70">{{ quote.subject ?? '—' }}</td>
+            <td class="text-sm text-base-content/70">{{ formatDate(quote.issued_at) }}</td>
+            <td class="text-sm text-base-content/70">{{ quote.valid_until ? formatDate(quote.valid_until) : '—' }}</td>
+            <td>
+              <span class="badge badge-sm" :class="statusClass(quote.status)">{{ statusLabel(quote.status) }}</span>
+            </td>
+            <td class="text-right">
+              <div class="flex justify-end gap-1">
+                <NuxtLink :to="`/quotes/${quote.id}`" class="btn btn-ghost btn-xs">Modifier</NuxtLink>
+                <button class="btn btn-ghost btn-xs text-error" @click="confirmDelete(quote)">Supprimer</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
     </div>
 
     <!-- Delete modal -->

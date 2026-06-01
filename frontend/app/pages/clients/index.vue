@@ -18,54 +18,50 @@
     </div>
 
     <!-- Empty -->
-    <div v-else-if="clients.length === 0" class="card bg-base-100 border border-base-300">
-      <div class="card-body items-center text-center py-16">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-base-content/20 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-        </svg>
-        <p class="text-base-content/40 font-medium">Aucun client pour l'instant</p>
-        <NuxtLink to="/clients/new" class="btn btn-primary btn-sm mt-4">Ajouter un client</NuxtLink>
-      </div>
+    <div v-else-if="clients.length === 0" class="py-16 flex flex-col items-center text-center">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-base-content/20 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
+      <p class="text-base-content/40 font-medium">Aucun client pour l'instant</p>
+      <NuxtLink to="/clients/new" class="btn btn-primary btn-sm mt-4">Ajouter un client</NuxtLink>
     </div>
 
     <!-- Table -->
-    <div v-else class="overflow-hidden">
-      <div class="overflow-x-auto">
-        <table class="table table-zebra">
-          <thead>
-            <tr class="text-base-content/60 text-xs uppercase tracking-wider">
-              <th>Nom / Société</th>
-              <th>Email</th>
-              <th>Ville</th>
-              <th>SIREN</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="client in clients" :key="client.id" class="hover">
-              <td>
-                <div class="font-medium text-base-content">{{ client.name }}</div>
-                <div v-if="client.company_name || client.contact_name" class="text-xs text-base-content/50">
-                  {{ client.company_name || client.contact_name }}
-                </div>
-              </td>
-              <td class="text-sm text-base-content/70">{{ client.email }}</td>
-              <td class="text-sm text-base-content/70">{{ client.city ?? '—' }}</td>
-              <td class="text-sm text-base-content/70 font-mono">{{ client.siren ?? '—' }}</td>
-              <td class="text-right">
-                <div class="flex justify-end gap-1">
-                  <NuxtLink :to="`/clients/${client.id}`" class="btn btn-ghost btn-xs">
-                    Modifier
-                  </NuxtLink>
-                  <button class="btn btn-ghost btn-xs text-error" @click="confirmDelete(client)">
-                    Supprimer
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <div v-else class="overflow-x-auto">
+      <table class="table table-zebra">
+        <thead>
+          <tr class="text-base-content/60 text-xs uppercase tracking-wider">
+            <th>Nom / Société</th>
+            <th>Email</th>
+            <th>Ville</th>
+            <th>SIREN</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="client in clients" :key="client.id" class="hover">
+            <td>
+              <div class="font-medium text-base-content">{{ client.name }}</div>
+              <div v-if="client.company_name || client.contact_name" class="text-xs text-base-content/50">
+                {{ client.company_name || client.contact_name }}
+              </div>
+            </td>
+            <td class="text-sm text-base-content/70">{{ client.email }}</td>
+            <td class="text-sm text-base-content/70">{{ client.city ?? '—' }}</td>
+            <td class="text-sm text-base-content/70 font-mono">{{ client.siren ?? '—' }}</td>
+            <td class="text-right">
+              <div class="flex justify-end gap-1">
+                <NuxtLink :to="`/clients/${client.id}`" class="btn btn-ghost btn-xs">
+                  Modifier
+                </NuxtLink>
+                <button class="btn btn-ghost btn-xs text-error" @click="confirmDelete(client)">
+                  Supprimer
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <!-- Delete modal -->
