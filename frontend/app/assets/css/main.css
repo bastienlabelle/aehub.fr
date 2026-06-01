@@ -6,3 +6,7 @@
 .btn, .badge {
   @apply rounded-lg;
 }
+
+body {
+  font-family: 'Inter', sans-serif;
+}
