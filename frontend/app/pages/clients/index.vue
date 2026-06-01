@@ -29,11 +29,11 @@
     </div>
 
     <!-- Table -->
-    <div v-else class="card bg-base-100 border border-base-300 overflow-hidden">
+    <div v-else class="overflow-hidden">
       <div class="overflow-x-auto">
         <table class="table table-zebra">
           <thead>
-            <tr class="bg-base-200 text-base-content/60 text-xs uppercase tracking-wider">
+            <tr class="text-base-content/60 text-xs uppercase tracking-wider">
               <th>Nom / Société</th>
               <th>Email</th>
               <th>Ville</th>
@@ -44,8 +44,10 @@
           <tbody>
             <tr v-for="client in clients" :key="client.id" class="hover">
               <td>
-                <div class="font-medium text-base-content">{{ client.contact_name }}</div>
-                <div v-if="client.company_name" class="text-xs text-base-content/50">{{ client.company_name }}</div>
+                <div class="font-medium text-base-content">{{ client.name }}</div>
+                <div v-if="client.company_name || client.contact_name" class="text-xs text-base-content/50">
+                  {{ client.company_name || client.contact_name }}
+                </div>
               </td>
               <td class="text-sm text-base-content/70">{{ client.email }}</td>
               <td class="text-sm text-base-content/70">{{ client.city ?? '—' }}</td>

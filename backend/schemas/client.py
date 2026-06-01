@@ -3,8 +3,9 @@ from pydantic import BaseModel, EmailStr
 
 
 class ClientCreate(BaseModel):
+    name: str
+    contact_name: str | None = None
     company_name: str | None = None
-    contact_name: str
     email: EmailStr
     phone: str | None = None
     address: str | None = None
@@ -15,8 +16,9 @@ class ClientCreate(BaseModel):
 
 
 class ClientUpdate(BaseModel):
-    company_name: str | None = None
+    name: str
     contact_name: str | None = None
+    company_name: str | None = None
     email: EmailStr | None = None
     phone: str | None = None
     address: str | None = None
@@ -29,8 +31,9 @@ class ClientUpdate(BaseModel):
 class ClientResponse(BaseModel):
     id: int
     user_id: int
+    name: str | None = None
+    contact_name: str | None = None
     company_name: str | None
-    contact_name: str
     email: str
     phone: str | None
     address: str | None

@@ -16,10 +16,15 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
+          <div class="form-control sm:col-span-2">
+            <label class="label"><span class="label-text font-medium">Nom <span class="text-error">*</span></span></label>
+            <input v-model="form.name" type="text" placeholder="Ex: Dupont SARL ou Jean Dupont" class="input input-bordered" :class="{ 'input-error': errors.name }" />
+            <label v-if="errors.name" class="label"><span class="label-text-alt text-error">{{ errors.name }}</span></label>
+          </div>
+
           <div class="form-control">
-            <label class="label"><span class="label-text font-medium">Nom du contact <span class="text-error">*</span></span></label>
-            <input v-model="form.contact_name" type="text" placeholder="Jean Dupont" class="input input-bordered" :class="{ 'input-error': errors.contact_name }" />
-            <label v-if="errors.contact_name" class="label"><span class="label-text-alt text-error">{{ errors.contact_name }}</span></label>
+            <label class="label"><span class="label-text font-medium">Nom du contact</span></label>
+            <input v-model="form.contact_name" type="text" placeholder="Jean Dupont" class="input input-bordered" />
           </div>
 
           <div class="form-control">
@@ -89,6 +94,7 @@ const { token } = useAuth()
 const router = useRouter()
 
 const form = reactive({
+  name: '',
   contact_name: '',
   company_name: '',
   email: '',
@@ -106,7 +112,7 @@ const loading = ref(false)
 
 function validate() {
   Object.keys(errors).forEach(k => delete errors[k])
-  if (!form.contact_name) errors.contact_name = 'Champ requis'
+  if (!form.name) errors.name = 'Champ requis'
   if (!form.email) errors.email = 'Champ requis'
   return Object.keys(errors).length === 0
 }
@@ -119,7 +125,17 @@ async function submit() {
     await $fetch('/api/clients/', {
       method: 'POST',
       headers: { Authorization: `Bearer ${token.value}` },
-      body: form,
+      body: {
+        ...form,
+        contact_name: form.contact_name || null,
+        company_name: form.company_name || null,
+        phone: form.phone || null,
+        address: form.address || null,
+        zip_code: form.zip_code || null,
+        city: form.city || null,
+        siren: form.siren || null,
+        siret: form.siret || null,
+      },
     })
     router.push('/clients')
   } catch {
