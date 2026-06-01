@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-base-200" :data-theme="currentTheme">
+  <div class="min-h-screen bg-base-100" :data-theme="currentTheme">
 
     <div class="drawer lg:drawer-open">
       <input id="sidebar-drawer" type="checkbox" class="drawer-toggle" />
@@ -8,7 +8,7 @@
       <div class="drawer-content flex flex-col">
 
         <!-- Topbar -->
-        <div class="navbar bg-base-100 px-6 sticky top-0 z-10 min-h-14">
+        <div class="navbar bg-neutral text-neutral-content px-6 sticky top-0 z-10 min-h-14">
           <!-- Burger mobile -->
           <div class="flex-none lg:hidden">
             <label for="sidebar-drawer" class="btn btn-ghost btn-circle btn-sm">
@@ -19,7 +19,7 @@
           </div>
 
           <div class="flex-1">
-            <span class="text-base font-semibold text-base-content">{{ pageTitle }}</span>
+            <span class="text-base font-semibold text-neutral-content">{{ pageTitle }}</span>
           </div>
 
           <div class="flex-none flex items-center gap-2">
@@ -38,7 +38,7 @@
             <div class="dropdown dropdown-end">
               <label tabindex="0" class="btn btn-ghost btn-sm gap-2 normal-case px-2">
                 <div class="avatar placeholder">
-                  <div class="bg-base-content text-base-100 rounded-full w-7 flex items-center justify-center">
+                  <div class="bg-neutral-content text-neutral rounded-full w-7 flex items-center justify-center">
                     <span class="text-xs font-bold">{{ userInitials }}</span>
                   </div>
                 </div>
@@ -56,7 +56,7 @@
         </div>
 
         <!-- Main content -->
-        <main class="flex-1 p-6">
+        <main class="flex-1 p-6 bg-base-100">
           <NuxtPage />
         </main>
 
@@ -65,16 +65,16 @@
       <!-- Sidebar -->
       <div class="drawer-side z-20">
         <label for="sidebar-drawer" class="drawer-overlay"></label>
-        <aside class="w-60 min-h-screen bg-base-100 flex flex-col">
+        <aside class="w-60 min-h-screen bg-neutral text-neutral-content flex flex-col">
 
           <!-- Logo -->
           <div class="px-5 py-4 flex items-center gap-3">
             <div class="avatar placeholder">
-              <div class="bg-base-content text-base-100 rounded-full w-8 flex items-center justify-center">
+              <div class="bg-neutral-content text-neutral rounded-full w-8 flex items-center justify-center">
                 <span class="text-xs font-bold">Æ</span>
               </div>
             </div>
-            <span class="text-base font-bold tracking-tight text-base-content">ÆHUB</span>
+            <span class="text-base font-bold tracking-tight text-neutral-content">ÆHUB</span>
           </div>
 
           <!-- Nav -->
@@ -83,7 +83,7 @@
               <li>
                 <NuxtLink
                   to="/"
-                  exact-active-class="bg-base-content text-base-100 hover:bg-base-content"
+                  exact-active-class="bg-neutral-content text-neutral hover:bg-base-content"
                   active-class=""
                   class="rounded-lg font-medium text-lg"
                 >
@@ -96,8 +96,8 @@
               <li>
                 <NuxtLink
                   to="/clients"
-                  active-class="bg-base-content text-base-100 hover:bg-base-content"
-                  exact-active-class="bg-base-content text-base-100 hover:bg-base-content"
+                  active-class="bg-neutral-content text-neutral hover:bg-base-content"
+                  exact-active-class="bg-neutral-content text-neutral hover:bg-base-content"
                   class="rounded-lg font-medium text-lg"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -109,8 +109,8 @@
               <li>
                 <NuxtLink
                   to="/quotes"
-                  active-class="bg-base-content text-base-100 hover:bg-base-content"
-                  exact-active-class="bg-base-content text-base-100 hover:bg-base-content"
+                  active-class="bg-neutral-content text-neutral hover:bg-base-content"
+                  exact-active-class="bg-neutral-content text-neutral hover:bg-base-content"
                   class="rounded-lg font-medium text-lg"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -122,8 +122,8 @@
               <li>
                 <NuxtLink
                   to="/invoices"
-                  active-class="bg-base-content text-base-100 hover:bg-base-content"
-                  exact-active-class="bg-base-content text-base-100 hover:bg-base-content"
+                  active-class="bg-neutral-content text-neutral hover:bg-base-content"
+                  exact-active-class="bg-neutral-content text-neutral hover:bg-base-content"
                   class="rounded-lg font-lg text-lg"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
