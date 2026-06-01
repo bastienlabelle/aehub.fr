@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, delete
+from sqlalchemy import select, delete, desc
 from sqlalchemy.orm import selectinload
 
 from db.session import get_db
@@ -27,6 +27,8 @@ def quote_select(user_id: int):
             selectinload(Quote.lines),
             selectinload(Quote.client),
         )
+        .order_by(desc(Quote.number))
+
     )
 
 

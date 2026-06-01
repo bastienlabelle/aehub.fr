@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, delete
+from sqlalchemy import select, delete, desc
 from sqlalchemy.orm import selectinload
 
 from db.session import get_db
@@ -19,7 +19,6 @@ def generate_invoice_number(counter: int) -> str:
     year = date.today().year
     return f"F{year}-{counter:03d}"
 
-
 def invoice_select(user_id: int):
     return (
         select(Invoice)
@@ -29,6 +28,7 @@ def invoice_select(user_id: int):
             selectinload(Invoice.client),
             selectinload(Invoice.payments).selectinload(InvoicePayment.payment),
         )
+        .order_by(desc(Invoice.number))
     )
 
 

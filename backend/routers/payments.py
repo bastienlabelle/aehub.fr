@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, delete
+from sqlalchemy import select, delete, desc
 from sqlalchemy.orm import selectinload
 from datetime import date
 
@@ -25,6 +25,8 @@ def payment_select(user_id: int):
         select(Payment)
         .where(Payment.user_id == user_id)
         .options(selectinload(Payment.invoices))
+        .order_by(desc(Payment.number))
+
     )
 
 
