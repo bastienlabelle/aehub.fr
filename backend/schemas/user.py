@@ -58,6 +58,7 @@ class UserUpdate(BaseModel):
     email: EmailStr | None = None
     website: str | None = None
     iban: str | None = None
+    password: str | None = None
 
 class TokenResponse(BaseModel):
     access_token: str

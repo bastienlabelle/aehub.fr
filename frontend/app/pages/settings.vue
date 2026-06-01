@@ -101,6 +101,24 @@
         </div>
       </div>
 
+      <!-- Mot de passe -->
+      <div class="card bg-base-100 border border-base-300">
+        <div class="card-body gap-4">
+          <h3 class="font-semibold text-base-content">Mot de passe</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="form-control">
+              <label class="label"><span class="label-text font-medium">Nouveau mot de passe</span></label>
+              <input v-model="form.password" type="password" placeholder="Laisser vide pour ne pas changer" class="input input-bordered" />
+            </div>
+            <div class="form-control">
+              <label class="label"><span class="label-text font-medium">Confirmer</span></label>
+              <input v-model="passwordConfirm" type="password" placeholder="Confirmer le mot de passe" class="input input-bordered" :class="{ 'input-error': errors.password }" />
+              <label v-if="errors.password" class="label"><span class="label-text-alt text-error">{{ errors.password }}</span></label>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div v-if="error" class="alert alert-error text-sm py-2">
         <span>{{ error }}</span>
       </div>
@@ -129,6 +147,7 @@ const saving = ref(false)
 const error = ref('')
 const success = ref(false)
 const errors = reactive<Record<string, string>>({})
+const passwordConfirm = ref('')
 
 const form = reactive({
   first_name: '',
@@ -143,6 +162,7 @@ const form = reactive({
   city: '',
   website: '',
   iban: '',
+  password: '',
 })
 
 onMounted(async () => {
@@ -181,6 +201,9 @@ function validate() {
   if (!form.address) errors.address = 'Champ requis'
   if (!form.zip_code) errors.zip_code = 'Champ requis'
   if (!form.city) errors.city = 'Champ requis'
+  if (form.password && form.password !== passwordConfirm.value) {
+    errors.password = 'Les mots de passe ne correspondent pas'
+  }
   return Object.keys(errors).length === 0
 }
 
@@ -195,6 +218,7 @@ async function submit() {
       headers: { Authorization: `Bearer ${token.value}` },
       body: {
         ...form,
+        password: form.password || null,
         phone: form.phone || null,
         company_name: form.company_name || null,
         website: form.website || null,
