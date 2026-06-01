@@ -247,7 +247,7 @@ onMounted(async () => {
     clients.value = fetchedClients
     quotes.value = fetchedQuotes
     Object.assign(form, {
-      client_id: fetchedInvoice.client_id,
+      client_id: fetchedInvoice.client.id,
       quote_id: fetchedInvoice.quote_id ?? null,
       subject: fetchedInvoice.subject ?? '',
       issued_at: fetchedInvoice.issued_at,

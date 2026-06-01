@@ -33,7 +33,7 @@
               <label class="label"><span class="label-text font-medium">Numéro</span></label>
               <input :value="quote?.number" type="text" class="input input-bordered font-mono bg-base-200" disabled />
             </div>
-            
+
             <div class="form-control">
               <label class="label"><span class="label-text font-medium">Client <span class="text-error">*</span></span></label>
               <select v-model="form.client_id" class="select select-bordered" :class="{ 'select-error': errors.client_id }">
@@ -233,7 +233,7 @@ onMounted(async () => {
     quote.value = fetchedQuote
     clients.value = fetchedClients
     Object.assign(form, {
-      client_id: fetchedQuote.client_id,
+      client_id: fetchedQuote.client.id,
       subject: fetchedQuote.subject ?? '',
       issued_at: fetchedQuote.issued_at,
       valid_until: fetchedQuote.valid_until ?? '',
