@@ -17,15 +17,17 @@
     </div>
 
     <div v-else class="card bg-base-100 border border-base-300">
-      <div class="card-body gap-5">
+      <div class="card-body gap-4">
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- Nom full width -->
+        <div class="form-control">
+          <label class="label"><span class="label-text font-medium">Nom <span class="text-error">*</span></span></label>
+          <input v-model="form.name" type="text" placeholder="Ex: Dupont SARL ou Jean Dupont" class="input input-bordered w-full" :class="{ 'input-error': errors.name }" />
+          <label v-if="errors.name" class="label"><span class="label-text-alt text-error">{{ errors.name }}</span></label>
+        </div>
 
-          <div class="form-control sm:col-span-2">
-            <label class="label"><span class="label-text font-medium">Nom <span class="text-error">*</span></span></label>
-            <input v-model="form.name" type="text" placeholder="Ex: Dupont SARL ou Jean Dupont" class="input input-bordered" :class="{ 'input-error': errors.name }" />
-            <label v-if="errors.name" class="label"><span class="label-text-alt text-error">{{ errors.name }}</span></label>
-          </div>
+        <!-- 2 colonnes -->
+        <div class="grid grid-cols-2 gap-4">
 
           <div class="form-control">
             <label class="label"><span class="label-text font-medium">Nom du contact</span></label>
@@ -48,10 +50,16 @@
             <input v-model="form.phone" type="tel" placeholder="0612345678" class="input input-bordered" />
           </div>
 
-          <div class="form-control sm:col-span-2">
-            <label class="label"><span class="label-text font-medium">Adresse</span></label>
-            <input v-model="form.address" type="text" placeholder="10 rue de la République" class="input input-bordered" />
-          </div>
+        </div>
+
+        <!-- Adresse full width -->
+        <div class="form-control">
+          <label class="label"><span class="label-text font-medium">Adresse</span></label>
+          <input v-model="form.address" type="text" placeholder="10 rue de la République" class="input input-bordered w-full" />
+        </div>
+
+        <!-- 2 colonnes suite -->
+        <div class="grid grid-cols-2 gap-4">
 
           <div class="form-control">
             <label class="label"><span class="label-text font-medium">Code postal</span></label>
