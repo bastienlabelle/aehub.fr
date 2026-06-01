@@ -151,6 +151,46 @@
         </div>
       </div>
 
+      <!-- Paiements -->
+      <div class="card bg-base-100 border border-base-300">
+        <div class="card-body gap-4">
+          <h3 class="font-semibold text-base-content">Paiements reçus</h3>
+          <div class="overflow-x-auto">
+            <table class="table table-sm">
+              <thead>
+                <tr class="text-base-content/50 text-xs uppercase tracking-wider">
+                  <th>Numéro</th>
+                  <th>Date</th>
+                  <th>Méthode</th>
+                  <th class="text-right">Montant alloué</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-if="!invoice?.payments?.length">
+                  <td colspan="4" class="text-center text-base-content/30 text-sm py-4">Aucun paiement reçu</td>
+                </tr>
+                <tr v-for="p in invoice?.payments" :key="p.id">
+                  <td class="font-mono text-sm">{{ p.payment_number }}</td>
+                  <td class="text-sm text-base-content/70">{{ formatDate(p.paid_at) }}</td>
+                  <td class="text-sm text-base-content/70">{{ p.method ?? '—' }}</td>
+                  <td class="text-sm font-medium text-right">{{ p.allocated_amount }} €</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="3" class="text-right text-sm text-base-content/50 font-medium">Total reçu</td>
+                  <td class="font-bold text-base-content text-right">{{ totalPaid }} €</td>
+                </tr>
+                <tr>
+                  <td colspan="3" class="text-right text-sm text-base-content/50 font-medium">Reste à payer</td>
+                  <td class="font-bold text-right" :class="remainingToPay > 0 ? 'text-error' : 'text-success'">{{ remainingToPay.toFixed(2) }} €</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </div>
+
       <div v-if="error" class="alert alert-error text-sm py-2">
         <span>{{ error }}</span>
       </div>
@@ -193,6 +233,14 @@ const form = reactive({
   lines: [] as any[],
 })
 
+const totalPaid = computed(() =>
+  (invoice.value?.payments ?? []).reduce((sum, p) => sum + Number(p.allocated_amount), 0).toFixed(2)
+)
+
+const remainingToPay = computed(() =>
+  Math.max(0, Number(totalHT.value) - Number(totalPaid.value))
+)
+
 function addLine() {
   form.lines.push({ description: '', quantity: 1, unit: '', unit_price: 0, discount_percent: null })
 }
@@ -234,6 +282,10 @@ function statusClass(status: string) {
     draft: 'badge-ghost', sent: 'badge-info', partial: 'badge-warning', paid: 'badge-success', cancelled: 'badge-error',
   }
   return classes[status] ?? 'badge-ghost'
+}
+
+function formatDate(d: string) {
+  return new Date(d).toLocaleDateString('fr-FR')
 }
 
 onMounted(async () => {
