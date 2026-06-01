@@ -1,6 +1,7 @@
 from datetime import datetime, date
 from pydantic import BaseModel
 from schemas.line import LineCreate, LineResponse
+from schemas.client import ClientResponse
 
 
 class InvoiceCreate(BaseModel):
@@ -27,7 +28,7 @@ class InvoiceResponse(BaseModel):
     id: int
     user_id: int
     number: str
-    client_id: int
+    client: ClientResponse
     quote_id: int | None
     subject: str | None
     issued_at: date

@@ -20,7 +20,14 @@ def generate_quote_number(counter: int) -> str:
 
 
 def quote_select(user_id: int):
-    return select(Quote).where(Quote.user_id == user_id).options(selectinload(Quote.lines))
+    return (
+        select(Quote)
+        .where(Quote.user_id == user_id)
+        .options(
+            selectinload(Quote.lines),
+            selectinload(Quote.client),
+        )
+    )
 
 
 @router.get("/", response_model=list[QuoteResponse])

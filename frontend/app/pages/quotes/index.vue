@@ -46,7 +46,7 @@
           <tbody>
             <tr v-for="quote in quotes" :key="quote.id" class="hover">
               <td class="font-mono text-sm font-medium">{{ quote.number }}</td>
-              <td class="text-sm text-base-content/70">{{ quote.client_id }}</td>
+              <td class="text-sm text-base-content/70">{{ quote.client.name }}</td>
               <td class="text-sm text-base-content/70">{{ quote.subject ?? '—' }}</td>
               <td class="text-sm text-base-content/70">{{ formatDate(quote.issued_at) }}</td>
               <td class="text-sm text-base-content/70">{{ quote.valid_until ? formatDate(quote.valid_until) : '—' }}</td>

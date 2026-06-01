@@ -20,7 +20,14 @@ def generate_invoice_number(counter: int) -> str:
 
 
 def invoice_select(user_id: int):
-    return select(Invoice).where(Invoice.user_id == user_id).options(selectinload(Invoice.lines))
+    return (
+        select(Invoice)
+        .where(Invoice.user_id == user_id)
+        .options(
+            selectinload(Invoice.lines),
+            selectinload(Invoice.client),
+        )
+    )
 
 
 @router.get("/", response_model=list[InvoiceResponse])

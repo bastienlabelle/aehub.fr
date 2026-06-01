@@ -46,7 +46,7 @@
           <tbody>
             <tr v-for="invoice in invoices" :key="invoice.id" class="hover">
               <td class="font-mono text-sm font-medium">{{ invoice.number }}</td>
-              <td class="text-sm text-base-content/70">{{ invoice.client_id }}</td>
+              <td class="text-sm text-base-content/70">{{ invoice.client.name }}</td>
               <td class="text-sm text-base-content/70">{{ invoice.subject ?? '—' }}</td>
               <td class="text-sm text-base-content/70">{{ formatDate(invoice.issued_at) }}</td>
               <td class="text-sm text-base-content/70">{{ invoice.due_date ? formatDate(invoice.due_date) : '—' }}</td>

@@ -2,6 +2,7 @@ from datetime import datetime, date
 from decimal import Decimal
 from pydantic import BaseModel
 from schemas.line import LineCreate, LineResponse
+from schemas.client import ClientResponse
 
 
 class QuoteCreate(BaseModel):
@@ -27,7 +28,7 @@ class QuoteResponse(BaseModel):
     id: int
     user_id: int
     number: str
-    client_id: int
+    client: ClientResponse  # remplace client_id
     subject: str | None
     issued_at: date
     valid_until: date | None
