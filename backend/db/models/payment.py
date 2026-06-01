@@ -23,4 +23,4 @@ class Payment(Base):
 
     # Relationships
     user: Mapped["User"] = relationship(back_populates="payments")
-    invoices: Mapped[list["InvoicePayment"]] = relationship(back_populates="payment")
+    invoices: Mapped[list["InvoicePayment"]] = relationship(back_populates="payment", cascade="all, delete-orphan")

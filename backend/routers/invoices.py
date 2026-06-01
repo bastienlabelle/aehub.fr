@@ -5,6 +5,7 @@ from sqlalchemy.orm import selectinload
 
 from db.session import get_db
 from db.models.invoice import Invoice
+from db.models.invoice_payment import InvoicePayment
 from db.models.line import Line
 from db.models.user import User
 from auth.dependencies import get_current_user
@@ -26,8 +27,10 @@ def invoice_select(user_id: int):
         .options(
             selectinload(Invoice.lines),
             selectinload(Invoice.client),
+            selectinload(Invoice.payments).selectinload(InvoicePayment.payment),
         )
     )
+
 
 @router.get("/next-number", response_model=dict)
 async def next_invoice_number(current_user: User = Depends(get_current_user)):
@@ -35,6 +38,7 @@ async def next_invoice_number(current_user: User = Depends(get_current_user)):
     year = date.today().year
     number = f"F{year}-{(current_user.invoice_counter + 1):03d}"
     return {"number": number}
+
 
 @router.get("/", response_model=list[InvoiceResponse])
 async def list_invoices(
