@@ -35,9 +35,25 @@ class ImportClient(BaseModel):
     siret: str | None = None
 
 
+class ImportAllocation(BaseModel):
+    invoice_ref: str
+    allocated_amount: Decimal
+
+
+class ImportPayment(BaseModel):
+    number: str
+    paid_at: date
+    amount: Decimal
+    method: str | None = None
+    reference: str | None = None
+    notes: str | None = None
+    allocations: list[ImportAllocation] = []
+
+
 class ImportPayload(BaseModel):
     clients: list[ImportClient] = []
     invoices: list[ImportInvoice] = []
+    payments: list[ImportPayment] = []
 
 
 class ImportResult(BaseModel):
@@ -45,4 +61,6 @@ class ImportResult(BaseModel):
     clients_updated: int
     invoices_created: int
     invoices_skipped: int
+    payments_created: int
+    payments_skipped: int
     errors: list[str]
