@@ -45,7 +45,7 @@
           <tr v-for="quote in quotes" :key="quote.id" class="hover">
             <td class="font-mono text-sm font-medium whitespace-nowrap">{{ quote.number }}</td>
             <td class="text-sm text-base-content/70">{{ quote.client.name }}</td>
-            <td class="text-sm text-base-content/70">{{ quote.subject ? invoice.subject.slice(0, 50) + (invoice.subject.length > 25 ? '…' : '') : '—' }}</td>
+            <td class="text-sm text-base-content/70">{{ quote.subject ? quote.subject.slice(0, 50) + (quote.subject.length > 25 ? '…' : '') : '—' }}</td>
             <td class="text-sm text-base-content/70">{{ formatDate(quote.issued_at) }}</td>
             <td class="text-sm text-base-content/70">{{ quote.valid_until ? formatDate(quote.valid_until) : '—' }}</td>
             <td>
