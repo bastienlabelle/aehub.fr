@@ -28,16 +28,16 @@
 
     <!-- Table -->
     <div v-else class="overflow-x-auto">
-
       <table class="table table-zebra">
         <thead>
           <tr class="text-base-content/60 text-xs uppercase tracking-wider">
             <th>Numéro</th>
             <th>Client</th>
-            <th>Objet</th>
             <th>Date</th>
             <th>Validité</th>
+            <th class="text-right">Total HT</th>
             <th>Statut</th>
+            <th></th>
             <th></th>
           </tr>
         </thead>
@@ -45,11 +45,14 @@
           <tr v-for="quote in quotes" :key="quote.id" class="hover">
             <td class="font-mono text-sm font-medium whitespace-nowrap">{{ quote.number }}</td>
             <td class="text-sm text-base-content/70">{{ quote.client.name }}</td>
-            <td class="text-sm text-base-content/70">{{ quote.subject ? quote.subject.slice(0, 50) + (quote.subject.length > 25 ? '…' : '') : '—' }}</td>
-            <td class="text-sm text-base-content/70">{{ formatDate(quote.issued_at) }}</td>
-            <td class="text-sm text-base-content/70">{{ quote.valid_until ? formatDate(quote.valid_until) : '—' }}</td>
+            <td class="text-sm text-base-content/70 whitespace-nowrap">{{ formatDate(quote.issued_at) }}</td>
+            <td class="text-sm text-base-content/70 whitespace-nowrap">{{ quote.valid_until ? formatDate(quote.valid_until) : '—' }}</td>
+            <td class="text-sm font-medium text-right whitespace-nowrap">{{ quoteTotalHT(quote) }} €</td>
             <td>
               <span class="badge badge-sm" :class="statusClass(quote.status)">{{ statusLabel(quote.status) }}</span>
+            </td>
+            <td>
+              <span v-if="isExpired(quote)" class="badge badge-sm badge-error">Expiré</span>
             </td>
             <td class="text-right">
               <div class="flex justify-end gap-1">
@@ -60,7 +63,6 @@
           </tr>
         </tbody>
       </table>
-
     </div>
 
     <!-- Delete modal -->
@@ -119,6 +121,20 @@ async function deleteQuote() {
     await fetchQuotes()
   } catch {}
   finally { deleting.value = false }
+}
+
+function quoteTotalHT(quote: any) {
+  return quote.lines.reduce((sum: number, l: any) => {
+    const base = Number(l.quantity) * Number(l.unit_price)
+    const discount = l.discount_percent ? base * (Number(l.discount_percent) / 100) : 0
+    return sum + base - discount
+  }, 0).toFixed(2)
+}
+
+function isExpired(quote: any) {
+  if (quote.status === 'accepted' || quote.status === 'refused' || quote.status === 'expired') return false
+  if (!quote.valid_until) return false
+  return new Date(quote.valid_until) < new Date()
 }
 
 function formatDate(date: string) {

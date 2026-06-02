@@ -33,10 +33,11 @@
           <tr class="text-base-content/60 text-xs uppercase tracking-wider">
             <th>Numéro</th>
             <th>Client</th>
-            <th>Objet</th>
             <th>Émission</th>
             <th>Échéance</th>
+            <th class="text-right">Total HT</th>
             <th>Statut</th>
+            <th></th>
             <th></th>
           </tr>
         </thead>
@@ -44,11 +45,14 @@
           <tr v-for="invoice in invoices" :key="invoice.id" class="hover">
             <td class="font-mono text-sm font-medium whitespace-nowrap">{{ invoice.number }}</td>
             <td class="text-sm text-base-content/70">{{ invoice.client.name }}</td>
-            <td class="text-sm text-base-content/70">{{ invoice.subject ? invoice.subject.slice(0, 50) + (invoice.subject.length > 25 ? '…' : '') : '—' }}</td>
-            <td class="text-sm text-base-content/70">{{ formatDate(invoice.issued_at) }}</td>
-            <td class="text-sm text-base-content/70">{{ invoice.due_date ? formatDate(invoice.due_date) : '—' }}</td>
+            <td class="text-sm text-base-content/70 whitespace-nowrap">{{ formatDate(invoice.issued_at) }}</td>
+            <td class="text-sm text-base-content/70 whitespace-nowrap">{{ invoice.due_date ? formatDate(invoice.due_date) : '—' }}</td>
+            <td class="text-sm font-medium text-right whitespace-nowrap">{{ invoiceTotalHT(invoice) }} €</td>
             <td>
               <span class="badge badge-sm" :class="statusClass(invoice.status)">{{ statusLabel(invoice.status) }}</span>
+            </td>
+            <td>
+              <span v-if="isOverdue(invoice)" class="badge badge-sm badge-error">En retard</span>
             </td>
             <td class="text-right">
               <div class="flex justify-end gap-1">
@@ -59,7 +63,6 @@
           </tr>
         </tbody>
       </table>
-
     </div>
 
     <!-- Delete modal -->
@@ -120,6 +123,14 @@ async function deleteInvoice() {
   finally { deleting.value = false }
 }
 
+function invoiceTotalHT(invoice: any) {
+  return invoice.lines.reduce((sum: number, l: any) => {
+    const base = Number(l.quantity) * Number(l.unit_price)
+    const discount = l.discount_percent ? base * (Number(l.discount_percent) / 100) : 0
+    return sum + base - discount
+  }, 0).toFixed(2)
+}
+
 function formatDate(date: string) {
   return new Date(date).toLocaleDateString('fr-FR')
 }
@@ -144,6 +155,12 @@ function statusClass(status: string) {
     cancelled: 'badge-error',
   }
   return classes[status] ?? 'badge-ghost'
+}
+
+function isOverdue(invoice: any) {
+  if (invoice.status === 'paid' || invoice.status === 'cancelled') return false
+  if (!invoice.due_date) return false
+  return new Date(invoice.due_date) < new Date()
 }
 
 await fetchInvoices()
