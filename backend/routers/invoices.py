@@ -15,8 +15,14 @@ from schemas.invoice import InvoiceCreate, InvoiceUpdate, InvoiceResponse
 router = APIRouter(prefix="/invoices", tags=["invoices"])
 
 
-def generate_invoice_number(counter: int) -> str:
+async def generate_invoice_number(user_id: int, db: AsyncSession) -> str:
     year = date.today().year
+    result = await db.execute(
+        select(func.max(Invoice.number))
+        .where(Invoice.user_id == user_id, Invoice.number.like(f"F{year}-%"))
+    )
+    last = result.scalar()
+    counter = int(last.split("-")[1]) + 1 if last else 1
     return f"F{year}-{counter:03d}"
 
 def invoice_select(user_id: int):
@@ -37,14 +43,7 @@ async def next_invoice_number(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    year = date.today().year
-    result = await db.execute(
-        select(func.max(Invoice.number))
-        .where(Invoice.user_id == current_user.id, Invoice.number.like(f"F{year}-%"))
-    )
-    last = result.scalar()
-    counter = int(last.split("-")[1]) + 1 if last else 1
-    return {"number": f"F{year}-{counter:03d}"}
+    return {"number": await generate_invoice_number(current_user.id, db)}
 
 
 @router.get("/", response_model=list[InvoiceResponse])
@@ -62,8 +61,7 @@ async def create_invoice(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    current_user.invoice_counter += 1
-    number = generate_invoice_number(current_user.invoice_counter)
+    number = await generate_invoice_number(current_user.id, db)
     invoice = Invoice(
         **payload.model_dump(exclude={"lines"}),
         user_id=current_user.id,

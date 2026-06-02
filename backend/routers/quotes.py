@@ -14,9 +14,14 @@ from schemas.quote import QuoteCreate, QuoteUpdate, QuoteResponse
 router = APIRouter(prefix="/quotes", tags=["quotes"])
 
 
-def generate_quote_number(counter: int) -> str:
-    from datetime import date
+async def generate_quote_number(user_id: int, db: AsyncSession) -> str:
     year = date.today().year
+    result = await db.execute(
+        select(func.max(Quote.number))
+        .where(Quote.user_id == user_id, Quote.number.like(f"D{year}-%"))
+    )
+    last = result.scalar()
+    counter = int(last.split("-")[1]) + 1 if last else 1
     return f"D{year}-{counter:03d}"
 
 
@@ -38,14 +43,7 @@ async def next_quote_number(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    year = date.today().year
-    result = await db.execute(
-        select(func.max(Quote.number))
-        .where(Quote.user_id == current_user.id, Quote.number.like(f"D{year}-%"))
-    )
-    last = result.scalar()
-    counter = int(last.split("-")[1]) + 1 if last else 1
-    return {"number": f"D{year}-{counter:03d}"}
+    return {"number": await generate_quote_number(current_user.id, db)}
 
 @router.get("/", response_model=list[QuoteResponse])
 async def list_quotes(
@@ -62,8 +60,7 @@ async def create_quote(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    current_user.quote_counter += 1
-    number = generate_quote_number(current_user.quote_counter)
+    number = await generate_quote_number(current_user.id, db)
     quote = Quote(
         **payload.model_dump(exclude={"lines"}),
         user_id=current_user.id,

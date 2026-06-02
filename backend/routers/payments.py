@@ -15,8 +15,14 @@ from utils.invoice import recalculate_invoice_status
 router = APIRouter(prefix="/payments", tags=["payments"])
 
 
-def generate_payment_number(counter: int) -> str:
+async def generate_payment_number(user_id: int, db: AsyncSession) -> str:
     year = date.today().year
+    result = await db.execute(
+        select(func.max(Payment.number))
+        .where(Payment.user_id == user_id, Payment.number.like(f"P{year}-%"))
+    )
+    last = result.scalar()
+    counter = int(last.split("-")[1]) + 1 if last else 1
     return f"P{year}-{counter:03d}"
 
 
@@ -35,14 +41,7 @@ async def next_payment_number(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    year = date.today().year
-    result = await db.execute(
-        select(func.max(Payment.number))
-        .where(Payment.user_id == current_user.id, Payment.number.like(f"P{year}-%"))
-    )
-    last = result.scalar()
-    counter = int(last.split("-")[1]) + 1 if last else 1
-    return {"number": f"P{year}-{counter:03d}"}
+    return {"number": await generate_payment_number(current_user.id, db)}
 
 
 @router.get("/", response_model=list[PaymentResponse])
@@ -60,8 +59,7 @@ async def create_payment(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    current_user.payment_counter += 1
-    number = generate_payment_number(current_user.payment_counter)
+    number = await generate_payment_number(current_user.id, db)
     payment = Payment(
         **payload.model_dump(exclude={"allocations"}),
         user_id=current_user.id,
