@@ -1,6 +1,7 @@
 from datetime import datetime, date
 from decimal import Decimal
 from pydantic import BaseModel
+from pydantic import model_validator
 
 
 class InvoiceAllocationCreate(BaseModel):
@@ -48,3 +49,10 @@ class PaymentResponse(BaseModel):
     updated_at: datetime
 
     model_config = {"from_attributes": True}
+
+    @model_validator(mode='before')
+    @classmethod
+    def map_invoices_to_allocations(cls, v: any) -> any:
+        if hasattr(v, 'invoices'):
+            v.__dict__['allocations'] = v.invoices
+        return v
