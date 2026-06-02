@@ -39,7 +39,7 @@
               <select v-model="form.client_id" class="select select-bordered" :class="{ 'select-error': errors.client_id }">
                 <option disabled value="">Sélectionner un client</option>
                 <option v-for="client in clients" :key="client.id" :value="client.id">
-                  {{ client.contact_name }}{{ client.company_name ? ` — ${client.company_name}` : '' }}
+                  {{ client.name }}
                 </option>
               </select>
               <label v-if="errors.client_id" class="label"><span class="label-text-alt text-error">{{ errors.client_id }}</span></label>
