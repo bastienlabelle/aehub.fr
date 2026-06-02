@@ -66,6 +66,14 @@
               <div class="stat-title text-xs">Factures ignorées</div>
               <div class="stat-value text-lg">{{ result.invoices_skipped }}</div>
             </div>
+            <div class="stat bg-base-200 rounded-lg px-4 py-3">
+              <div class="stat-title text-xs">Paiements importés</div>
+              <div class="stat-value text-lg">{{ result.payments_created }}</div>
+            </div>
+            <div class="stat bg-base-200 rounded-lg px-4 py-3">
+              <div class="stat-title text-xs">Paiements ignorés</div>
+              <div class="stat-value text-lg">{{ result.payments_skipped }}</div>
+            </div>
           </div>
 
           <div v-if="result.errors.length" class="flex flex-col gap-1 mt-2">
