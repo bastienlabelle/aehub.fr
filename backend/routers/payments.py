@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, delete, desc
+from sqlalchemy import select, delete, desc, func
 from sqlalchemy.orm import selectinload
 from datetime import date
 
@@ -31,10 +31,18 @@ def payment_select(user_id: int):
 
 
 @router.get("/next-number", response_model=dict)
-async def next_payment_number(current_user: User = Depends(get_current_user)):
+async def next_payment_number(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
     year = date.today().year
-    number = f"P{year}-{(current_user.payment_counter + 1):03d}"
-    return {"number": number}
+    result = await db.execute(
+        select(func.max(Payment.number))
+        .where(Payment.user_id == current_user.id, Payment.number.like(f"P{year}-%"))
+    )
+    last = result.scalar()
+    counter = int(last.split("-")[1]) + 1 if last else 1
+    return {"number": f"P{year}-{counter:03d}"}
 
 
 @router.get("/", response_model=list[PaymentResponse])

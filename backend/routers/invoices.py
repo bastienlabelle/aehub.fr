@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, delete, desc
+from sqlalchemy import select, delete, desc, func
 from sqlalchemy.orm import selectinload
+from datetime import date
 
 from db.session import get_db
 from db.models.invoice import Invoice
@@ -15,7 +16,6 @@ router = APIRouter(prefix="/invoices", tags=["invoices"])
 
 
 def generate_invoice_number(counter: int) -> str:
-    from datetime import date
     year = date.today().year
     return f"F{year}-{counter:03d}"
 
@@ -33,11 +33,18 @@ def invoice_select(user_id: int):
 
 
 @router.get("/next-number", response_model=dict)
-async def next_invoice_number(current_user: User = Depends(get_current_user)):
-    from datetime import date
+async def next_invoice_number(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
     year = date.today().year
-    number = f"F{year}-{(current_user.invoice_counter + 1):03d}"
-    return {"number": number}
+    result = await db.execute(
+        select(func.max(Invoice.number))
+        .where(Invoice.user_id == current_user.id, Invoice.number.like(f"F{year}-%"))
+    )
+    last = result.scalar()
+    counter = int(last.split("-")[1]) + 1 if last else 1
+    return {"number": f"F{year}-{counter:03d}"}
 
 
 @router.get("/", response_model=list[InvoiceResponse])
