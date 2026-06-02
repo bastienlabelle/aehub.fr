@@ -49,6 +49,7 @@
               </label>
               <ul tabindex="0" class="dropdown-content menu menu-sm shadow-lg bg-base-100 text-base-content rounded-box w-48 mt-2 border border-base-200">
                 <li><NuxtLink to="/settings">Préférences</NuxtLink></li>
+                <li><NuxtLink to="/import">Import</NuxtLink></li>
                 <li><a @click="logout" class="text-error">Se déconnecter</a></li>
               </ul>
             </div>
@@ -177,6 +178,7 @@ const route = useRoute()
 const pageTitle = computed(() => {
   const extraTitles: Record<string, string> = {
     '/settings': 'Préférences',
+    '/import': 'Import de données',
   }
   if (extraTitles[route.path]) return extraTitles[route.path]
   const match = menuItems.find(item =>
