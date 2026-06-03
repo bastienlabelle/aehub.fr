@@ -149,6 +149,7 @@ function statusLabel(status: string) {
     partial: 'Partielle',
     paid: 'Payée',
     cancelled: 'Annulée',
+    uncollectible: 'Irrécouvrable'
   }
   return labels[status] ?? status
 }
@@ -160,6 +161,7 @@ function statusClass(status: string) {
     partial: 'badge-warning',
     paid: 'badge-success',
     cancelled: 'badge-error',
+    uncollectible: 'badge-error'
   }
   return classes[status] ?? 'badge-ghost'
 }
@@ -167,7 +169,9 @@ function statusClass(status: string) {
 function isOverdue(invoice: any) {
   if (invoice.status === 'paid' || invoice.status === 'cancelled') return false
   if (!invoice.due_date) return false
-  return new Date(invoice.due_date) < new Date()
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  return new Date(invoice.due_date) < today
 }
 
 await fetchInvoices()

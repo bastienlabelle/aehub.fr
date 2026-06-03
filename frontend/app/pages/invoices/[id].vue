@@ -61,6 +61,7 @@
                 <option value="partial">Partielle</option>
                 <option value="paid">Payée</option>
                 <option value="cancelled">Annulée</option>
+                <option value="uncollectible">Irrécouvrable</option>
               </select>
             </div>
 
@@ -289,14 +290,14 @@ function validate() {
 
 function statusLabel(status: string) {
   const labels: Record<string, string> = {
-    draft: 'Brouillon', sent: 'Envoyée', partial: 'Partielle', paid: 'Payée', cancelled: 'Annulée',
+    draft: 'Brouillon', sent: 'Envoyée', partial: 'Partielle', paid: 'Payée', cancelled: 'Annulée', uncollectible: 'Irrécouvrable'
   }
   return labels[status] ?? status
 }
 
 function statusClass(status: string) {
   const classes: Record<string, string> = {
-    draft: 'badge-ghost', sent: 'badge-info', partial: 'badge-warning', paid: 'badge-success', cancelled: 'badge-error',
+    draft: 'badge-ghost', sent: 'badge-info', partial: 'badge-warning', paid: 'badge-success', cancelled: 'badge-error', uncollectible: 'badge-ghost'
   }
   return classes[status] ?? 'badge-ghost'
 }
