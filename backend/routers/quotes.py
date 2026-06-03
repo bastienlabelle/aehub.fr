@@ -3,6 +3,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete, desc, func
 from sqlalchemy.orm import selectinload
 from datetime import date
+from jinja2 import Environment, FileSystemLoader
+import os
 
 from db.session import get_db
 from db.models.quote import Quote
@@ -10,9 +12,13 @@ from db.models.line import Line
 from db.models.user import User
 from auth.dependencies import get_current_user
 from schemas.quote import QuoteCreate, QuoteUpdate, QuoteResponse
+from fastapi.responses import Response
 
 router = APIRouter(prefix="/quotes", tags=["quotes"])
 
+_jinja_env = Environment(
+    loader=FileSystemLoader(os.path.join(os.path.dirname(__file__), '..', 'templates'))
+)
 
 async def generate_quote_number(user_id: int, db: AsyncSession) -> str:
     year = date.today().year
@@ -36,6 +42,10 @@ def quote_select(user_id: int):
         .order_by(desc(Quote.number))
 
     )
+
+def render_quote_html(quote, user) -> str:
+    template = _jinja_env.get_template('quote.html')
+    return template.render(quote=quote, user=user)
 
 
 @router.get("/next-number", response_model=dict)
@@ -74,6 +84,30 @@ async def create_quote(
     await db.commit()
     result = await db.execute(quote_select(current_user.id).where(Quote.id == quote.id))
     return result.scalar_one()
+
+@router.get("/{quote_id}/pdf")
+async def quote_pdf(
+    quote_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    result = await db.execute(
+        quote_select(current_user.id).where(Quote.id == quote_id)
+    )
+    quote = result.scalar_one_or_none()
+    if not quote:
+        raise HTTPException(status_code=404, detail="Devis introuvable")
+
+    html = render_quote_html(quote, current_user)
+
+    from weasyprint import HTML
+    pdf = HTML(string=html).write_pdf()
+
+    return Response(
+        content=pdf,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f"inline; filename={quote.number}.pdf"}
+    )
 
 
 @router.get("/{quote_id}", response_model=QuoteResponse)
