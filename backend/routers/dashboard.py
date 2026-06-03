@@ -131,3 +131,47 @@ async def get_stats(
         "overdue_invoices": [format_invoice(i) for i in overdue_raw],
         "oldest_year": oldest_year,
     }
+
+@router.get("/declarations")
+async def get_declarations(
+    year: int = None,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    if year is None:
+        year = date.today().year
+
+    # CA par trimestre basé sur payments
+    quarterly_result = await db.execute(
+        select(
+            func.extract('quarter', Payment.paid_at).label('quarter'),
+            func.sum(Payment.amount).label('total')
+        )
+        .where(
+            Payment.user_id == current_user.id,
+            Payment.paid_at >= date(year, 1, 1),
+            Payment.paid_at <= date(year, 12, 31),
+        )
+        .group_by(func.extract('quarter', Payment.paid_at))
+        .order_by(func.extract('quarter', Payment.paid_at))
+    )
+    quarterly_raw = quarterly_result.all()
+    quarterly = {int(r.quarter): round(float(r.total), 2) for r in quarterly_raw}
+
+    # Plus vieille année de paiement
+    oldest_result = await db.execute(
+        select(func.min(func.extract('year', Payment.paid_at)))
+        .where(Payment.user_id == current_user.id)
+    )
+    oldest_year = int(oldest_result.scalar() or year)
+
+    return {
+        "year": year,
+        "oldest_year": oldest_year,
+        "quarters": {
+            "Q1": quarterly.get(1, 0),
+            "Q2": quarterly.get(2, 0),
+            "Q3": quarterly.get(3, 0),
+            "Q4": quarterly.get(4, 0),
+        }
+    }
