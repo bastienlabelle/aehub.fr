@@ -27,12 +27,12 @@
     </div>
 
     <!-- Table -->
-    <div v-else class="overflow-x-auto">
+    <div v-else class="">
       <table class="table table-zebra">
         <thead>
           <tr class="text-base-content/60 text-xs uppercase tracking-wider">
             <th>Numéro</th>
-            <th>Client</th>
+            <th class="w-full">Client</th>
             <th>Émission</th>
             <th>Échéance</th>
             <th class="text-right">Total HT</th>
@@ -44,20 +44,27 @@
         <tbody>
           <tr v-for="invoice in invoices" :key="invoice.id" class="hover">
             <td class="font-mono text-sm font-medium whitespace-nowrap">{{ invoice.number }}</td>
-            <td class="text-sm text-base-content/70">{{ invoice.client.name }}</td>
+            <td class="text-sm text-base-content/70 w-full">{{ invoice.client.name }}</td>
             <td class="text-sm text-base-content/70 whitespace-nowrap">{{ formatDate(invoice.issued_at) }}</td>
             <td class="text-sm text-base-content/70 whitespace-nowrap">{{ invoice.due_date ? formatDate(invoice.due_date) : '—' }}</td>
             <td class="text-sm font-medium text-right whitespace-nowrap">{{ invoiceTotalHT(invoice) }} €</td>
-            <td>
+            <td class="whitespace-nowrap">
               <span class="badge badge-sm" :class="statusClass(invoice.status)">{{ statusLabel(invoice.status) }}</span>
             </td>
-            <td>
+            <td class="whitespace-nowrap">
               <span v-if="isOverdue(invoice)" class="badge badge-sm badge-error">En retard</span>
             </td>
-            <td class="text-right">
-              <div class="flex justify-end gap-1">
-                <NuxtLink :to="`/invoices/${invoice.id}`" class="btn btn-ghost btn-xs">Modifier</NuxtLink>
-                <button class="btn btn-ghost btn-xs text-error" @click="confirmDelete(invoice)">Supprimer</button>
+            <td>
+              <div class="dropdown dropdown-end">
+                <label tabindex="0" class="btn btn-ghost btn-xs btn-square">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
+                  </svg>
+                </label>
+                <ul tabindex="0" class="dropdown-content menu menu-sm shadow bg-base-100 rounded-box w-36 border border-base-200 z-10">
+                  <li><NuxtLink :to="`/invoices/${invoice.id}`">Modifier</NuxtLink></li>
+                  <li><a class="text-error" @click="confirmDelete(invoice)">Supprimer</a></li>
+                </ul>
               </div>
             </td>
           </tr>
