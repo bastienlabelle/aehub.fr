@@ -1,8 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete, desc, func
 from sqlalchemy.orm import selectinload
 from datetime import date, timedelta
+from jinja2 import Environment, FileSystemLoader
+import os
 
 from db.session import get_db
 from db.models.invoice import Invoice
@@ -13,6 +16,10 @@ from auth.dependencies import get_current_user
 from schemas.invoice import InvoiceCreate, InvoiceUpdate, InvoiceResponse
 
 router = APIRouter(prefix="/invoices", tags=["invoices"])
+
+_jinja_env = Environment(
+    loader=FileSystemLoader(os.path.join(os.path.dirname(__file__), '..', 'templates'))
+)
 
 
 async def generate_invoice_number(user_id: int, db: AsyncSession) -> str:
@@ -36,6 +43,11 @@ def invoice_select(user_id: int):
         )
         .order_by(desc(Invoice.number))
     )
+
+
+def render_invoice_html(invoice, user) -> str:
+    template = _jinja_env.get_template('invoice.html')
+    return template.render(invoice=invoice, user=user)
 
 
 @router.get("/next-number", response_model=dict)
@@ -77,6 +89,31 @@ async def create_invoice(
     await db.commit()
     result = await db.execute(invoice_select(current_user.id).where(Invoice.id == invoice.id))
     return result.scalar_one()
+
+
+@router.get("/{invoice_id}/pdf")
+async def invoice_pdf(
+    invoice_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    result = await db.execute(
+        invoice_select(current_user.id).where(Invoice.id == invoice_id)
+    )
+    invoice = result.scalar_one_or_none()
+    if not invoice:
+        raise HTTPException(status_code=404, detail="Facture introuvable")
+
+    html = render_invoice_html(invoice, current_user)
+
+    from weasyprint import HTML
+    pdf = HTML(string=html).write_pdf()
+
+    return Response(
+        content=pdf,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f"inline; filename={invoice.number}.pdf"}
+    )
 
 
 @router.get("/{invoice_id}", response_model=InvoiceResponse)

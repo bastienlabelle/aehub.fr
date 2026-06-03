@@ -1,5 +1,15 @@
 FROM python:3.14-slim AS base
 
+# Dépendances WeasyPrint
+RUN apt-get update && apt-get install -y \
+    libpango-1.0-0 \
+    libpangoft2-1.0-0 \
+    libgobject-2.0-0 \
+    libcairo2 \
+    libffi-dev \
+    shared-mime-info \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 COPY ./backend /app
 

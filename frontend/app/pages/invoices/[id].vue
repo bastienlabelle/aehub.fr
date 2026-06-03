@@ -13,6 +13,14 @@
         <p v-if="invoice?.subject" class="text-sm text-base-content/50">{{ invoice.subject }}</p>
       </div>
       <span v-if="invoice" class="badge ml-2" :class="statusClass(invoice.status)">{{ statusLabel(invoice.status) }}</span>
+      <div class="ml-auto">
+        <button class="btn btn-ghost btn-sm gap-2" @click="openPdf">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+          </svg>
+          PDF
+        </button>
+      </div>
     </div>
 
     <!-- Loading -->
@@ -262,6 +270,15 @@ const totalHT = computed(() => {
     return sum + base - discount
   }, 0).toFixed(2)
 })
+
+async function openPdf() {
+  const response = await fetch(`/api/invoices/${id}/pdf`, {
+    headers: { Authorization: `Bearer ${token.value}` }
+  })
+  const blob = await response.blob()
+  const url = URL.createObjectURL(blob)
+  window.open(url, '_blank')
+}
 
 function validate() {
   Object.keys(errors).forEach(k => delete errors[k])
