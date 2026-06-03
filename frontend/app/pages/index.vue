@@ -1,6 +1,14 @@
 <template>
   <div>
 
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-xl font-bold text-base-content">Dashboard</h2>
+      <select v-model="selectedYear" class="select select-bordered select-sm" @change="fetchStats">
+        <option v-for="y in availableYears" :key="y" :value="y">{{ y }}</option>
+      </select>
+    </div>
+
     <!-- Loading -->
     <div v-if="loading" class="flex justify-center py-12">
       <span class="loading loading-spinner loading-md"></span>
@@ -13,7 +21,7 @@
 
         <div class="card bg-base-100 border border-base-300">
           <div class="card-body p-5">
-            <p class="text-xs text-base-content/50 font-medium uppercase tracking-wider">CA encaissé {{ currentYear }}</p>
+            <p class="text-xs text-base-content/50 font-medium uppercase tracking-wider">CA encaissé {{ selectedYear }}</p>
             <p class="text-2xl font-bold text-base-content mt-1">{{ formatAmount(stats.revenue_paid) }} €</p>
           </div>
         </div>
@@ -44,7 +52,7 @@
       <!-- Graphique CA mensuel -->
       <div class="card bg-base-100 border border-base-300">
         <div class="card-body p-5">
-          <h3 class="font-semibold text-base-content mb-4">CA mensuel {{ currentYear }}</h3>
+          <h3 class="font-semibold text-base-content mb-4">CA mensuel {{ selectedYear }}</h3>
           <div class="flex items-end gap-1 h-40">
             <div
               v-for="m in monthlyData"
@@ -130,6 +138,17 @@ definePageMeta({ middleware: 'auth' })
 
 const { token } = useAuth()
 
+const currentYear = new Date().getFullYear()
+const selectedYear = ref(currentYear)
+const availableYears = computed(() => {
+  const oldest = stats.value.oldest_year ?? currentYear
+  const years = []
+  for (let y = currentYear; y >= oldest; y--) {
+    years.push(y)
+  }
+  return years
+})
+
 const loading = ref(true)
 const stats = ref<any>({
   revenue_paid: 0,
@@ -140,8 +159,6 @@ const stats = ref<any>({
   recent_invoices: [],
   overdue_invoices: [],
 })
-
-const currentYear = new Date().getFullYear()
 
 const MONTHS = [
   { label: 'Janvier', short: 'Jan' },
@@ -170,6 +187,16 @@ const maxMonthly = computed(() => {
   return max > 0 ? max : 1
 })
 
+async function fetchStats() {
+  loading.value = true
+  try {
+    stats.value = await $fetch(`/api/dashboard/stats?year=${selectedYear.value}`, {
+      headers: { Authorization: `Bearer ${token.value}` }
+    })
+  } catch {}
+  finally { loading.value = false }
+}
+
 function formatAmount(val: number) {
   return new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val)
 }
@@ -181,24 +208,17 @@ function daysOverdue(due_date: string) {
 
 function statusLabel(status: string) {
   const labels: Record<string, string> = {
-    draft: 'Brouillon', sent: 'Envoyée', partial: 'Partielle', paid: 'Payée', cancelled: 'Annulée',
+    draft: 'Brouillon', sent: 'Envoyée', partial: 'Partielle', paid: 'Payée', cancelled: 'Annulée', uncollectible: 'Irrécouvrable',
   }
   return labels[status] ?? status
 }
 
 function statusClass(status: string) {
   const classes: Record<string, string> = {
-    draft: 'badge-ghost', sent: 'badge-info', partial: 'badge-warning', paid: 'badge-success', cancelled: 'badge-error',
+    draft: 'badge-ghost', sent: 'badge-info', partial: 'badge-warning', paid: 'badge-success', cancelled: 'badge-error', uncollectible: 'badge-error',
   }
   return classes[status] ?? 'badge-ghost'
 }
 
-onMounted(async () => {
-  try {
-    stats.value = await $fetch('/api/dashboard/stats', {
-      headers: { Authorization: `Bearer ${token.value}` }
-    })
-  } catch {}
-  finally { loading.value = false }
-})
+onMounted(() => fetchStats())
 </script>

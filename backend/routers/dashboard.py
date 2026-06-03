@@ -18,10 +18,12 @@ router = APIRouter(prefix="/dashboard", tags=["dashboard"])
 
 @router.get("/stats")
 async def get_stats(
+    year: int = None,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    year = date.today().year
+    if year is None:
+        year = date.today().year
 
     # CA encaissé cette année (basé sur payments)
     revenue_result = await db.execute(
@@ -112,6 +114,13 @@ async def get_stats(
             "status": inv.status,
         }
 
+    # Plus vieille année de paiement
+    oldest_result = await db.execute(
+        select(func.min(func.extract('year', Payment.paid_at)))
+        .where(Payment.user_id == current_user.id)
+    )
+    oldest_year = int(oldest_result.scalar() or date.today().year)
+
     return {
         "revenue_paid": round(revenue_paid, 2),
         "revenue_pending": round(revenue_pending, 2),
@@ -120,4 +129,5 @@ async def get_stats(
         "monthly": monthly,
         "recent_invoices": [format_invoice(i) for i in recent_invoices_raw],
         "overdue_invoices": [format_invoice(i) for i in overdue_raw],
+        "oldest_year": oldest_year,
     }
