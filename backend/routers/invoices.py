@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete, desc, func
 from sqlalchemy.orm import selectinload
-from datetime import date
+from datetime import date, timedelta
 
 from db.session import get_db
 from db.models.invoice import Invoice
@@ -62,6 +62,8 @@ async def create_invoice(
     current_user: User = Depends(get_current_user),
 ):
     number = await generate_invoice_number(current_user.id, db)
+    if not payload.due_date and payload.issued_at:
+        payload.due_date = payload.issued_at + timedelta(days=30)
     invoice = Invoice(
         **payload.model_dump(exclude={"lines"}),
         user_id=current_user.id,
