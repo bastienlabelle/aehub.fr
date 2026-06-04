@@ -26,6 +26,8 @@ async def update_me(
     data = payload.model_dump(exclude_unset=True)
     if 'password' in data and data['password']:
         data['password'] = hash_password(data['password'])
+    elif 'password' in data:
+        del data['password']  # ← ne pas toucher au mot de passe si vide
     for key, value in data.items():
         setattr(current_user, key, value)
     await db.commit()
