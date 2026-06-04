@@ -33,14 +33,14 @@
       <!-- Total annuel -->
       <div class="card bg-base-100 border border-base-300">
         <div class="card-body p-5 flex flex-row items-center justify-between">
-          <div>
+          <div class="text-center">
             <p class="text-xs text-base-content/50 font-medium uppercase tracking-wider">Total {{ selectedYear }}</p>
             <p class="text-3xl font-bold text-base-content mt-1">{{ formatAmount(totalYear) }} €</p>
           </div>
-          <div class="text-right">
+          <div class="text-center">
             <p class="text-xs text-base-content/50 font-medium uppercase tracking-wider">Cotisations estimées</p>
             <p class="text-2xl font-bold text-warning mt-1">{{ formatAmount(estimatedContributions) }} €</p>
-            <p class="text-xs text-base-content/30 mt-1">~22% (taux micro-entreprise services)</p>
+            <p class="text-xs text-base-content/30 mt-1">~{{ formatAmount(rate * 100.0) }}% (taux micro-entreprise BNC)</p>
           </div>
         </div>
       </div>
