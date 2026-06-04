@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<style>
+@page { margin: 0; }
+body{
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  margin:0;
+  background:#f9fafb;
+  color:#111;
+}
+.sheet{
+  max-width:900px;
+  margin:auto;
+  background:#fff;
+  border:1px solid #e5e7eb;
+}
+.header{
+  padding:30px;
+  border-bottom:1px solid #e5e7eb;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+}
+.title{
+  font-size:24px;
+  font-weight:800;
+}
+.meta{
+  text-align:right;
+  font-size:12px;
+  color:#666;
+  line-height:1.6;
+}
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  border-bottom:1px solid #e5e7eb;
+}
+.cell{
+  padding:20px;
+  border-right:1px solid #e5e7eb;
+  font-size:12px;
+  line-height:1.7;
+}
+.cell:last-child{
+  border-right:none;
+}
+.label{
+  font-size:10px;
+  text-transform:uppercase;
+  color:#999;
+  margin-bottom:6px;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+th, td{
+  border-bottom:1px solid #e5e7eb;
+  padding:12px 16px;
+  font-size:12px;
+}
+th{
+  font-size:10px;
+  text-transform:uppercase;
+  color:#888;
+  text-align:left;
+}
+td.description{
+  width:45%;
+}
+.right{text-align:right;}
+td.right{ white-space:nowrap; }
+.total{
+  padding:20px;
+  display:flex;
+  justify-content:flex-end;
+}
+.box{
+  width:260px;
+}
+.row{
+  display:flex;
+  justify-content:space-between;
+  padding:6px 0;
+  font-size:12px;
+}
+.row.final{
+  font-weight:800;
+  border-top:2px solid #111;
+  margin-top:8px;
+  padding-top:10px;
+}
+.subject{
+  padding:16px 20px;
+  border-bottom:1px solid #e5e7eb;
+  font-size:12px;
+}
+.notes{
+  padding:16px 20px;
+  border-top:1px solid #e5e7eb;
+  font-size:11px;
+  color:#666;
+  line-height:1.7;
+}
+.mentions{
+  padding:12px 20px;
+  border-top:1px solid #e5e7eb;
+  font-size:10px;
+  color:#aaa;
+  line-height:1.8;
+}
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="title">DEVIS</div>
+    <div class="meta">
+      {{ quote.number }}<br>
+      {{ quote.issued_at.strftime('%d/%m/%Y') }}<br>
+      {% if quote.valid_until %}Valable jusqu'au : {{ quote.valid_until.strftime('%d/%m/%Y') }}{% endif %}
+    </div>
+  </div>
+
+  <!-- Parties -->
+  <div class="grid">
+    <div class="cell">
+      <div class="label">Émetteur</div>
+      <strong>{{ user.company_name or (user.first_name + ' ' + user.last_name) }}</strong><br>
+      {{ user.address }}<br>
+      {{ user.zip_code }} {{ user.city }}<br>
+      {{ user.email }}<br>
+      SIREN {{ user.siren }}
+      {% if user.iban %}<br>IBAN {{ user.iban }}{% endif %}
+    </div>
+    <div class="cell">
+      <div class="label">Client</div>
+      {% if quote.client.company_name %}
+        <strong>{{ quote.client.company_name }}</strong><br>
+        {% if quote.client.contact_name %}{{ quote.client.contact_name }}<br>{% endif %}
+      {% else %}
+        <strong>{{ quote.client.contact_name or quote.client.name }}</strong><br>
+      {% endif %}
+      {% if quote.client.address %}{{ quote.client.address }}<br>{% endif %}
+      {% if quote.client.zip_code and quote.client.city %}{{ quote.client.zip_code }} {{ quote.client.city }}<br>{% endif %}
+      {% if quote.client.email %}{{ quote.client.email }}{% endif %}
+    </div>
+  </div>
+
+  <!-- Subject -->
+  {% if quote.subject %}
+  <div class="subject">
+    <div class="label">Objet</div>
+    <strong>{{ quote.subject }}</strong>
+  </div>
+  {% endif %}
+
+  <!-- Lines -->
+  <table>
+    <thead>
+      <tr>
+        <th>Description</th>
+        <th class="right">Qté</th>
+        <th class="right">Unité</th>
+        <th class="right">P.U. HT</th>
+        <th class="right">Remise</th>
+        <th class="right">Total HT</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for line in quote.lines %}
+      {% set base = line.quantity * line.unit_price %}
+      {% set discount = (base * line.discount_percent / 100) if line.discount_percent else 0 %}
+      {% set total = base - discount %}
+      <tr>
+        <td class="description">{{ line.description }}</td>
+        <td class="right">{{ line.quantity }}</td>
+        <td class="right">{{ line.unit or '—' }}</td>
+        <td class="right">{{ '%.2f'|format(line.unit_price) }} €</td>
+        <td class="right">{{ ('%.0f'|format(line.discount_percent) + ' %') if line.discount_percent else '—' }}</td>
+        <td class="right">{{ '%.2f'|format(total) }} €</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- Total -->
+  {% set total_ht = namespace(value=0) %}
+  {% for line in quote.lines %}
+    {% set base = line.quantity * line.unit_price %}
+    {% set discount = (base * line.discount_percent / 100) if line.discount_percent else 0 %}
+    {% set total_ht.value = total_ht.value + base - discount %}
+  {% endfor %}
+
+  <div class="total">
+    <div class="box">
+      <div class="row final">
+        <span>Total HT</span>
+        <span>{{ '%.2f'|format(total_ht.value) }} €</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notes -->
+  {% if quote.notes %}
+  <div class="notes">
+    <div class="label">Notes</div>
+    {{ quote.notes }}
+  </div>
+  {% endif %}
+
+  <!-- Mentions -->
+  <div class="mentions">
+    Ce devis est valable 30 jours à compter de sa date d'émission. ·
+    
+    TVA non applicable, art. 293 B du CGI.
+  </div>
+
+</div>
+</body>
+</html>

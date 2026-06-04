@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<style>
+@page { margin: 0; }
+body{
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  margin:0;
+  padding:50px;
+  background:#f5f7fb;
+  color:#111;
+}
+.card{
+  background:#fff;
+  border-radius:16px;
+  padding:40px;
+  max-width:900px;
+  margin:auto;
+  box-shadow:0 10px 30px rgba(0,0,0,0.06);
+}
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  margin-bottom:40px;
+}
+.title{
+  font-size:26px;
+  font-weight:800;
+  letter-spacing:-0.8px;
+}
+.badge-draft{ background:#94a3b8; color:#fff; padding:6px 10px; border-radius:999px; font-size:11px; }
+.badge-sent{ background:#2563eb; color:#fff; padding:6px 10px; border-radius:999px; font-size:11px; }
+.badge-partial{ background:#f59e0b; color:#fff; padding:6px 10px; border-radius:999px; font-size:11px; }
+.badge-paid{ background:#10b981; color:#fff; padding:6px 10px; border-radius:999px; font-size:11px; }
+.badge-cancelled{ background:#ef4444; color:#fff; padding:6px 10px; border-radius:999px; font-size:11px; }
+.badge-uncollectible{ background:#6b7280; color:#fff; padding:6px 10px; border-radius:999px; font-size:11px; }
+.section{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:30px;
+}
+.box{
+  width:48%;
+  background:#f8fafc;
+  padding:16px;
+  border-radius:12px;
+  line-height:1.7;
+}
+.label{
+  font-size:10px;
+  color:#64748b;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  margin-bottom:6px;
+}
+.meta{
+  color:#64748b;
+  font-size:12px;
+  margin-top:4px;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:20px;
+}
+th{
+  text-align:left;
+  font-size:11px;
+  color:#64748b;
+  padding:10px;
+  text-transform:uppercase;
+  letter-spacing:0.5px;
+}
+td{
+  padding:12px 10px;
+  border-top:1px solid #eef2f7;
+  font-size:12px;
+  white-space:nowrap;
+}
+td.description{
+  white-space:normal;
+  width:45%;
+}
+.right{text-align:right;}
+.total{
+  margin-top:25px;
+  display:flex;
+  justify-content:flex-end;
+}
+.total-box{
+  background:#f1f5f9;
+  padding:16px;
+  border-radius:12px;
+  width:260px;
+}
+.total-box div{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:8px;
+  font-size:12px;
+}
+.total-box .final{
+  font-weight:800;
+  font-size:15px;
+  border-top:1px solid #cbd5e1;
+  padding-top:10px;
+  margin-bottom:0;
+}
+.subject{
+  background:#f8fafc;
+  border-radius:12px;
+  padding:14px 16px;
+  margin-bottom:20px;
+}
+.notes{
+  background:#f8fafc;
+  border-radius:12px;
+  padding:14px 16px;
+  margin-top:25px;
+  font-size:11px;
+  color:#64748b;
+  line-height:1.7;
+}
+.mentions{
+  margin-top:20px;
+  font-size:10px;
+  color:#94a3b8;
+  line-height:1.8;
+  padding-top:16px;
+  border-top:1px solid #e2e8f0;
+}
+</style>
+</head>
+<body>
+<div class="card">
+
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <div class="title">Devis</div>
+      <div class="meta">
+        {{ quote.number }}<br>
+        Émise le {{ quote.issued_at.strftime('%d/%m/%Y') }}
+        {% if quote.valid_until %} · Valable jusqu'au {{ quote.valid_until.strftime('%d/%m/%Y') }}{% endif %}
+      </div>
+    </div>
+    {% set status_labels = {'draft': 'Brouillon', 'sent': 'Envoyée', 'partial': 'Partielle', 'paid': 'Payée', 'cancelled': 'Annulée', 'uncollectible': 'Irrécouvrable'} %}
+    <span class="badge-{{ quote.status }}">{{ status_labels.get(quote.status, quote.status) }}</span>
+  </div>
+
+  <!-- Parties -->
+  <div class="section">
+    <div class="box">
+      <div class="label">Émetteur</div>
+      <strong>{{ user.company_name or (user.first_name + ' ' + user.last_name) }}</strong><br>
+      {{ user.email }}<br>
+      {{ user.zip_code }} {{ user.city }}<br>
+      SIREN {{ user.siren }}
+      {% if user.phone %}<br>{{ user.phone }}{% endif %}
+    </div>
+    <div class="box">
+      <div class="label">Client</div>
+      {% if quote.client.company_name %}
+        <strong>{{ quote.client.company_name }}</strong><br>
+        {% if quote.client.contact_name %}{{ quote.client.contact_name }}<br>{% endif %}
+        {% if quote.client.address %}{{ quote.client.address }}<br>{% endif %}
+        {% if quote.client.zip_code and quote.client.city %}{{ quote.client.zip_code }} {{ quote.client.city }}<br>{% endif %}
+        {% if quote.client.email %}{{ quote.client.email }}{% endif %}
+      {% else %}
+        <strong>{{ quote.client.contact_name or quote.client.name }}</strong><br>
+        {% if quote.client.address %}{{ quote.client.address }}<br>{% endif %}
+        {% if quote.client.zip_code and quote.client.city %}{{ quote.client.zip_code }} {{ quote.client.city }}<br>{% endif %}
+        {% if quote.client.email %}{{ quote.client.email }}{% endif %}
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Subject -->
+  {% if quote.subject %}
+  <div class="subject">
+    <div class="label">Objet</div>
+    <strong>{{ quote.subject }}</strong>
+  </div>
+  {% endif %}
+
+  <!-- Lines -->
+  <table>
+    <thead>
+      <tr>
+        <th>Description</th>
+        <th class="right">Qté</th>
+        <th class="right">Unité</th>
+        <th class="right">P.U. HT</th>
+        <th class="right">Remise</th>
+        <th class="right">Total HT</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for line in quote.lines %}
+      {% set base = line.quantity * line.unit_price %}
+      {% set discount = (base * line.discount_percent / 100) if line.discount_percent else 0 %}
+      {% set total = base - discount %}
+      <tr>
+        <td class="description">{{ line.description }}</td>
+        <td class="right">{{ line.quantity }}</td>
+        <td class="right">{{ line.unit or '—' }}</td>
+        <td class="right">{{ '%.2f'|format(line.unit_price) }} €</td>
+        <td class="right">{{ ('%.0f'|format(line.discount_percent) + ' %') if line.discount_percent else '—' }}</td>
+        <td class="right">{{ '%.2f'|format(total) }} €</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- Total -->
+  {% set total_ht = namespace(value=0) %}
+  {% for line in quote.lines %}
+    {% set base = line.quantity * line.unit_price %}
+    {% set discount = (base * line.discount_percent / 100) if line.discount_percent else 0 %}
+    {% set total_ht.value = total_ht.value + base - discount %}
+  {% endfor %}
+
+  <div class="total">
+    <div class="total-box">
+      <div class="final">
+        <span>Total HT</span>
+        <span>{{ '%.2f'|format(total_ht.value) }} €</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notes -->
+  {% if quote.notes %}
+  <div class="notes">
+    <div class="label">Notes</div>
+    {{ quote.notes }}
+  </div>
+  {% endif %}
+
+  <!-- Mentions -->
+  <div class="mentions">
+    Ce devis est valable 30 jours à compter de sa date d'émission.<br>
+    
+    {% if user.iban %}IBAN : {{ user.iban }}<br>{% endif %}
+    TVA non applicable, art. 293 B du CGI.
+  </div>
+
+</div>
+</body>
+</html>

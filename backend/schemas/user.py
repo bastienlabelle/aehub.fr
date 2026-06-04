@@ -40,6 +40,7 @@ class UserResponse(BaseModel):
     invoice_counter: int
     quote_counter: int
     payment_counter: int
+    invoice_template: str
     created_at: datetime
     updated_at: datetime
 
@@ -59,6 +60,7 @@ class UserUpdate(BaseModel):
     website: str | None = None
     iban: str | None = None
     password: str | None = None
+    invoice_template: str | None = None
 
 class TokenResponse(BaseModel):
     access_token: str

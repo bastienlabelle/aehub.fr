@@ -44,7 +44,8 @@ def quote_select(user_id: int):
     )
 
 def render_quote_html(quote, user) -> str:
-    template = _jinja_env.get_template('quote.html')
+    template_name = f"quote-{user.invoice_template or 'default'}.html"
+    template = _jinja_env.get_template(template_name)
     return template.render(quote=quote, user=user)
 
 

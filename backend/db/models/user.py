@@ -28,6 +28,7 @@ class User(Base):
     payment_counter: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now())
+    invoice_template: Mapped[str] = mapped_column(String, nullable=False, default="default", server_default="default")
 
     # Relationships
     clients: Mapped[list["Client"]] = relationship(back_populates="user")

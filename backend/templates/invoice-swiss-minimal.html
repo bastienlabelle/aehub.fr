@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<style>
+@page { margin: 0; }
+body{
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 12px;
+  color:#111;
+  margin:0;
+  padding:60px;
+  background:#fff;
+}
+.top{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:60px;
+}
+.h1{
+  font-size:28px;
+  font-weight:700;
+  letter-spacing:-1px;
+}
+.small{
+  color:#666;
+  line-height:1.6;
+}
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:40px;
+  margin-bottom:50px;
+}
+.label{
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:1.2px;
+  color:#999;
+  margin-bottom:6px;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:30px;
+}
+thead th{
+  text-align:left;
+  font-size:10px;
+  text-transform:uppercase;
+  color:#999;
+  border-bottom:1px solid #ddd;
+  padding:10px 0;
+}
+tbody td{
+  padding:14px 0;
+  border-bottom:1px solid #f0f0f0;
+  white-space:nowrap;
+}
+tbody td.description{
+  white-space:normal;
+  width:50%;
+}
+.right{text-align:right;}
+.total-section{
+  margin-top:30px;
+  display:flex;
+  justify-content:flex-end;
+}
+.box{
+  width:260px;
+}
+.row{
+  display:flex;
+  justify-content:space-between;
+  padding:6px 0;
+}
+.row.total-row{
+  font-weight:700;
+  border-top:2px solid #111;
+  margin-top:10px;
+  padding-top:10px;
+}
+.mentions{
+  margin-top:40px;
+  font-size:10px;
+  color:#999;
+  line-height:1.8;
+  border-top:1px solid #eee;
+  padding-top:16px;
+}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div>
+    <div class="h1">FACTURE</div>
+    <div class="small">
+      N° {{ invoice.number }}<br>
+      {{ invoice.issued_at.strftime('%d/%m/%Y') }}
+      {% if invoice.due_date %}<br>Échéance : {{ invoice.due_date.strftime('%d/%m/%Y') }}{% endif %}
+    </div>
+  </div>
+  <div class="small" style="text-align:right">
+    {{ user.company_name or (user.first_name + ' ' + user.last_name) }}<br>
+    {{ user.address }}<br>
+    {{ user.zip_code }} {{ user.city }}<br>
+    {% if user.phone %}{{ user.phone }}<br>{% endif %}
+    {{ user.email }}
+  </div>
+</div>
+
+<div class="grid">
+  <div>
+    <div class="label">Émetteur</div>
+    <strong>{{ user.first_name }} {{ user.last_name }}</strong><br>
+    {% if user.company_name %}{{ user.company_name }}<br>{% endif %}
+    {{ user.email }}<br>
+    SIREN {{ user.siren }}
+  </div>
+  <div>
+    <div class="label">Client</div>
+    {% if invoice.client.company_name %}
+      <strong>{{ invoice.client.company_name }}</strong><br>
+      {% if invoice.client.address %}{{ invoice.client.address }}<br>{% endif %}
+      {% if invoice.client.zip_code and invoice.client.city %}{{ invoice.client.zip_code }} {{ invoice.client.city }}<br>{% endif %}
+      {% if invoice.client.contact_name %}{{ invoice.client.contact_name }}<br>{% endif %}
+      {% if invoice.client.email %}{{ invoice.client.email }}{% endif %}
+    {% else %}
+      <strong>{{ invoice.client.contact_name or invoice.client.name }}</strong><br>
+      {% if invoice.client.address %}{{ invoice.client.address }}<br>{% endif %}
+      {% if invoice.client.zip_code and invoice.client.city %}{{ invoice.client.zip_code }} {{ invoice.client.city }}<br>{% endif %}
+      {% if invoice.client.email %}{{ invoice.client.email }}{% endif %}
+    {% endif %}
+  </div>
+</div>
+
+{% if invoice.subject %}
+<div style="margin-bottom:20px;">
+  <div class="label">Objet</div>
+  <strong>{{ invoice.subject }}</strong>
+</div>
+{% endif %}
+
+<table>
+  <thead>
+    <tr>
+      <th>Description</th>
+      <th class="right">Qté</th>
+      <th class="right">Unité</th>
+      <th class="right">P.U. HT</th>
+      <th class="right">Remise</th>
+      <th class="right">Total HT</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for line in invoice.lines %}
+    {% set base = line.quantity * line.unit_price %}
+    {% set discount = (base * line.discount_percent / 100) if line.discount_percent else 0 %}
+    {% set total = base - discount %}
+    <tr>
+      <td class="description">{{ line.description }}</td>
+      <td class="right">{{ line.quantity }}</td>
+      <td class="right">{{ line.unit or '—' }}</td>
+      <td class="right">{{ '%.2f'|format(line.unit_price) }} €</td>
+      <td class="right">{{ ('%.0f'|format(line.discount_percent) + ' %') if line.discount_percent else '—' }}</td>
+      <td class="right">{{ '%.2f'|format(total) }} €</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% set total_ht = namespace(value=0) %}
+{% for line in invoice.lines %}
+  {% set base = line.quantity * line.unit_price %}
+  {% set discount = (base * line.discount_percent / 100) if line.discount_percent else 0 %}
+  {% set total_ht.value = total_ht.value + base - discount %}
+{% endfor %}
+
+<div class="total-section">
+  <div class="box">
+    <div class="row total-row">
+      <span>Total HT</span>
+      <span>{{ '%.2f'|format(total_ht.value) }} €</span>
+    </div>
+  </div>
+</div>
+
+{% if invoice.notes %}
+<div style="margin-top:30px;">
+  <div class="label">Notes</div>
+  <div class="small">{{ invoice.notes }}</div>
+</div>
+{% endif %}
+
+<div class="mentions">
+  À payer sous 30 jours à réception de la facture, par virement.<br>
+  En cas de retard de paiement, indemnité forfaitaire légale pour frais de recouvrement : 40,00 €.<br>
+  {% if user.iban %}IBAN : {{ user.iban }}<br>{% endif %}
+  TVA non applicable, art. 293 B du CGI.
+</div>
+
+</body>
+</html>

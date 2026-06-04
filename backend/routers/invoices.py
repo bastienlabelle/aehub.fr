@@ -46,7 +46,8 @@ def invoice_select(user_id: int):
 
 
 def render_invoice_html(invoice, user) -> str:
-    template = _jinja_env.get_template('invoice.html')
+    template_name = f"invoice-{user.invoice_template or 'default'}.html"
+    template = _jinja_env.get_template(template_name)
     return template.render(invoice=invoice, user=user)
 
 

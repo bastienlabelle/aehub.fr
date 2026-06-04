@@ -119,6 +119,25 @@
         </div>
       </div>
 
+      <!-- Template de facture -->
+      <div class="card bg-base-100 border border-base-300">
+        <div class="card-body gap-4">
+          <h3 class="font-semibold text-base-content">Template de facture</h3>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div
+              v-for="t in templates"
+              :key="t.value"
+              class="border-2 rounded-lg p-4 cursor-pointer transition-all"
+              :class="form.invoice_template === t.value ? 'border-primary bg-primary/5' : 'border-base-300 hover:border-base-content/30'"
+              @click="form.invoice_template = t.value"
+            >
+              <p class="font-medium text-sm">{{ t.label }}</p>
+              <p class="text-xs text-base-content/40 mt-1">{{ t.description }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div v-if="error" class="alert alert-error text-sm py-2">
         <span>{{ error }}</span>
       </div>
@@ -149,6 +168,15 @@ const success = ref(false)
 const errors = reactive<Record<string, string>>({})
 const passwordConfirm = ref('')
 
+const templates = [
+  { value: 'default', label: 'Par défaut', description: 'Template standard' },
+  { value: 'swiss-minimal', label: 'Swiss Minimal', description: 'Design épuré, typographie forte' },
+  { value: 'modern', label: 'Modern', description: 'Design card avec badges colorés' },
+  { value: 'editorial', label: 'Editorial', description: 'Layout éditorial, deux colonnes' },
+  { value: 'grid', label: 'Grid', description: 'Design structuré façon tableur' },
+  { value: 'fintech', label: 'Fintech', description: 'Design card minimaliste, layout lignes' },
+]
+
 const form = reactive({
   first_name: '',
   last_name: '',
@@ -163,6 +191,7 @@ const form = reactive({
   website: '',
   iban: '',
   password: '',
+  invoice_template: '',
 })
 
 onMounted(async () => {
@@ -183,6 +212,7 @@ onMounted(async () => {
       city: user.city ?? '',
       website: user.website ?? '',
       iban: user.iban ?? '',
+      invoice_template: user.invoice_template ?? 'default',
     })
   } catch {
     error.value = 'Impossible de charger les préférences'
