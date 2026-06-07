@@ -34,7 +34,7 @@
             <th>Numéro</th>
             <th>Date</th>
             <th>Méthode</th>
-            <th>Référence</th>
+            <th>Nature</th>
             <th>Factures</th>
             <th class="text-right">Montant</th>
             <th></th>
@@ -45,7 +45,7 @@
             <td class="font-mono text-sm font-medium">{{ payment.number }}</td>
             <td class="text-sm text-base-content/70">{{ formatDate(payment.paid_at) }}</td>
             <td class="text-sm text-base-content/70">{{ payment.method ?? '—' }}</td>
-            <td class="text-sm text-base-content/70">{{ payment.reference ?? '—' }}</td>
+            <td class="text-sm text-base-content/70">{{ payment.category ?? '—' }}</td>
             <td class="text-sm text-base-content/70">
               <span v-if="payment.allocations?.length">
                 {{ payment.allocations.length }} facture{{ payment.allocations.length > 1 ? 's' : '' }}

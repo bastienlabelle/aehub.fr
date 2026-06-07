@@ -54,7 +54,15 @@
               <input v-model="form.reference" type="text" placeholder="Ex: VIR-2026-001" class="input input-bordered" />
             </div>
 
-            <div class="form-control col-span-2">
+            <div class="form-control">
+              <label class="label"><span class="label-text font-medium">Catégorie</span></label>
+              <select v-model="form.category" class="select select-bordered">
+                <option :value="null">—</option>
+                <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
+              </select>
+            </div>
+
+            <div class="form-control">
               <label class="label"><span class="label-text font-medium">Notes</span></label>
               <textarea v-model="form.notes" class="textarea textarea-bordered" rows="2" placeholder="Informations complémentaires..."></textarea>
             </div>
@@ -236,6 +244,7 @@ async function submit() {
         method: form.method,
         reference: form.reference || null,
         notes: form.notes || null,
+        category: form.category || null,
         allocations: form.allocations
           .filter(a => a.invoice_id && a.allocated_amount)
           .map(a => ({
@@ -252,7 +261,15 @@ async function submit() {
   }
 }
 
+const categories = ref<string[]>([])
+
 onMounted(async () => {
+  const user = await $fetch<any>('/api/auth/me', {
+    headers: { Authorization: `Bearer ${token.value}` }
+  })
+  categories.value = user.payment_categories
+    ? user.payment_categories.split('\n').map((c: string) => c.trim()).filter(Boolean)
+    : []
   const [fetchedInvoices, { number }] = await Promise.all([
     $fetch<any[]>('/api/invoices/', { headers: { Authorization: `Bearer ${token.value}` } }),
     $fetch<any>('/api/payments/next-number', { headers: { Authorization: `Bearer ${token.value}` } }),

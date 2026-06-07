@@ -41,6 +41,7 @@ class UserResponse(BaseModel):
     quote_counter: int
     payment_counter: int
     invoice_template: str
+    payment_categories: str | None
     created_at: datetime
     updated_at: datetime
 
@@ -61,6 +62,7 @@ class UserUpdate(BaseModel):
     iban: str | None = None
     password: str | None = None
     invoice_template: str | None = None
+    payment_categories: str | None = None
 
 class TokenResponse(BaseModel):
     access_token: str

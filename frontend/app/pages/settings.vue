@@ -138,6 +138,22 @@
         </div>
       </div>
 
+      <!-- Catégories de paiement -->
+      <div class="card bg-base-100 border border-base-300">
+        <div class="card-body gap-4">
+          <h3 class="font-semibold text-base-content">Catégories de paiement</h3>
+          <div class="form-control">
+            <textarea
+              v-model="form.payment_categories"
+              class="textarea textarea-bordered"
+              rows="5"
+              placeholder="Développement web&#10;Contenu digital&#10;Conseil"
+            ></textarea>
+            <label class="label"><span class="label-text-alt text-base-content/40">Une catégorie par ligne</span></label>
+          </div>
+        </div>
+      </div>
+
       <div v-if="error" class="alert alert-error text-sm py-2">
         <span>{{ error }}</span>
       </div>
@@ -192,6 +208,7 @@ const form = reactive({
   iban: '',
   password: '',
   invoice_template: '',
+  payment_categories: '',
 })
 
 onMounted(async () => {
@@ -213,6 +230,7 @@ onMounted(async () => {
       website: user.website ?? '',
       iban: user.iban ?? '',
       invoice_template: user.invoice_template ?? 'default',
+      payment_categories: user.payment_categories ?? '',
     })
   } catch {
     error.value = 'Impossible de charger les préférences'
@@ -253,6 +271,7 @@ async function submit() {
         company_name: form.company_name || null,
         website: form.website || null,
         iban: form.iban || null,
+        payment_categories: form.payment_categories || null,
       },
     })
     success.value = true

@@ -1,6 +1,6 @@
 # db/models/user.py
 from datetime import datetime
-from sqlalchemy import String, Integer, DateTime, LargeBinary, func
+from sqlalchemy import String, Integer, DateTime, LargeBinary, func, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from db.base import Base
@@ -29,6 +29,7 @@ class User(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now())
     invoice_template: Mapped[str] = mapped_column(String, nullable=False, default="default", server_default="default")
+    payment_categories: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     # Relationships
     clients: Mapped[list["Client"]] = relationship(back_populates="user")

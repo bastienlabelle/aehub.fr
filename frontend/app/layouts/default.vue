@@ -177,6 +177,12 @@ const menuItems = [
     exact: false,
     icon: 'M6 2h9l5 5v15a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2zm3 7h6v2H9V9zm0 4h6v2H9v-2zm0 4h4v2H9v-2z',
   },
+  {
+    to: '/accounting',
+    label: 'Comptabilité',
+    exact: false,
+    icon: 'M5 3a2 2 0 012-2h10a2 2 0 012 2v18a1 1 0 01-1.447.894L12 19.118l-5.553 2.776A1 1 0 015 21V3zm3 3v2h8V6H8zm0 4v2h8v-2H8zm0 4v2h5v-2H8z',
+  },
 ]
 
 const route = useRoute()

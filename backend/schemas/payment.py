@@ -23,6 +23,7 @@ class PaymentCreate(BaseModel):
     method: str | None = None
     reference: str | None = None
     notes: str | None = None
+    category: str | None = None
     allocations: list[InvoiceAllocationCreate] = []
 
 
@@ -32,6 +33,7 @@ class PaymentUpdate(BaseModel):
     method: str | None = None
     reference: str | None = None
     notes: str | None = None
+    category: str | None = None
     allocations: list[InvoiceAllocationCreate] | None = None
 
 
@@ -44,6 +46,7 @@ class PaymentResponse(BaseModel):
     method: str | None
     reference: str | None
     notes: str | None
+    category: str | None = None
     allocations: list[InvoiceAllocationResponse] = []
     created_at: datetime
     updated_at: datetime
