@@ -1,4 +1,4 @@
-FROM node:26-slim AS base
+FROM node:25-slim AS base
 
 WORKDIR /app
 COPY ./frontend /app
