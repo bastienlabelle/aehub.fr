@@ -146,8 +146,6 @@ td.description{
         {% if quote.valid_until %} · Valable jusqu'au {{ quote.valid_until.strftime('%d/%m/%Y') }}{% endif %}
       </div>
     </div>
-    {% set status_labels = {'draft': 'Brouillon', 'sent': 'Envoyée', 'partial': 'Partielle', 'paid': 'Payée', 'cancelled': 'Annulée', 'uncollectible': 'Irrécouvrable'} %}
-    <span class="badge-{{ quote.status }}">{{ status_labels.get(quote.status, quote.status) }}</span>
   </div>
 
   <!-- Parties -->
