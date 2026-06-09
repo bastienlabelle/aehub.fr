@@ -191,6 +191,7 @@ const templates = [
   { value: 'editorial', label: 'Editorial', description: 'Layout éditorial, deux colonnes' },
   { value: 'grid', label: 'Grid', description: 'Design structuré façon tableur' },
   { value: 'fintech', label: 'Fintech', description: 'Design card minimaliste, layout lignes' },
+  { value: 'bstn', label: 'BSTN', description: 'Style éditorial noir, mise en page sidebar' },
 ]
 
 const form = reactive({
