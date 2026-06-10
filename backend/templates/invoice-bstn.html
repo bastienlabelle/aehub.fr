@@ -3,211 +3,237 @@
 <head>
   <meta charset="UTF-8" />
   <style>
-    @page { margin: 0; }
+    @page { margin: 30px 40px; size: A4; }
 
     body {
       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
       font-weight: 300;
       font-size: 10px;
-      line-height: 1.4;
+      line-height: 1.5;
       color: #333;
-      padding: 40px;
       margin: 0;
+      padding: 0;
     }
 
-    .header {
+    /* Header centré sur la partie droite */
+    .header-wrap {
       width: 100%;
-      margin-bottom: 20px;
+      border-collapse: collapse;
     }
-
-    .header table {
-      width: 100%;
-    }
+    .header-wrap td { vertical-align: top; padding: 0; }
+    .header-spacer { width: 160px; }
+    .header-content { padding-left: 20px; }
 
     .header-title {
-      margin-bottom: 12px;
-      font-weight: 700;
-      line-height: 1;
+      margin-bottom: 8px;
     }
-
     .header-title span {
-      font-size: 22px;
-      background: #000;
-      color: #fff;
-      padding: 6px 14px;
-      text-transform: uppercase;
-    }
-
-    .header-invoice-number {
-      margin-bottom: 14px;
-    }
-
-    .header-invoice-number span {
-      font-size: 10px;
-      background: #000;
-      color: #fff;
-      padding: 4px 14px;
-      text-transform: uppercase;
-    }
-
-    .header-object {
-      font-size: 11px;
+      font-size: 26px;
       font-weight: 700;
-      margin-bottom: 10px;
-    }
-
-    .side {
-      text-align: right;
-      padding-right: 20px;
-      vertical-align: top;
-      font-size: 10px;
-      line-height: 1.6;
-    }
-
-    .side span {
-      font-size: 9px;
+      background: #000;
+      color: #fff;
+      padding: 6px 16px;
       text-transform: uppercase;
-      color: #666;
+      letter-spacing: 1px;
+    }
+    .header-number {
+      margin-bottom: 20px;
+    }
+    .header-number span {
+      font-size: 9px;
+      background: #000;
+      color: #fff;
+      padding: 3px 12px;
+      text-transform: uppercase;
+    }
+    .header-object {
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
     }
 
+    /* Layout principal */
+    .main-layout {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .main-layout > tbody > tr > td {
+      vertical-align: top;
+      padding: 0;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 160px;
+      padding-right: 20px;
+      text-align: right;
+      font-size: 9.5px;
+      line-height: 1.7;
+    }
+    .sidebar .section { margin-bottom: 16px; }
+    .sidebar .section-label {
+      font-size: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #999;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    /* Contenu */
+    .content {
+      padding-left: 20px;
+      border-left: 1px solid #eee;
+    }
+
+    /* Table lignes */
     .items-table {
       width: 100%;
       border-collapse: collapse;
     }
-
     .items-table th {
-      text-align: left;
-      font-size: 9px;
+      font-size: 8px;
       text-transform: uppercase;
-      padding-bottom: 6px;
-    }
-
-    .items-table th.price,
-    .items-table th.qty,
-    .items-table th.amount {
-      text-align: right;
-    }
-
-    .items-table td {
-      padding: 5px 0;
-      vertical-align: top;
-    }
-
-    .items-table td.price,
-    .items-table td.qty,
-    .items-table td.amount {
-      text-align: right;
-      white-space: nowrap;
-    }
-
-    .items-table tfoot td {
-      font-weight: 700;
-      text-align: right;
-      padding: 4px 0;
-    }
-
-    .items-table tfoot td:first-child {
+      letter-spacing: 0.8px;
+      color: #888;
       text-align: left;
-    }
-
-    .border {
-      height: 0;
-      padding: 0 !important;
+      padding: 0 4px 8px 0;
       border-bottom: 1px solid #333;
     }
-
-    .border.light {
-      border-bottom: 1px solid #ccc;
+    .items-table th.right { text-align: right; }
+    .items-table td {
+      font-size: 9.5px;
+      padding: 8px 4px 8px 0;
+      vertical-align: top;
+      border-bottom: 1px solid #eee;
     }
+    .items-table td.right { text-align: right; white-space: nowrap; }
+    .items-table tbody tr:last-child td { border-bottom: none; }
 
-    .footer {
-      margin-top: 40px;
-    }
-
-    .footer table {
+    /* Totaux */
+    .totals {
       width: 100%;
+      border-collapse: collapse;
+      margin-top: 0;
+    }
+    .totals td {
+      font-size: 9.5px;
+      padding: 5px 4px 5px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .totals td.right { text-align: right; white-space: nowrap; }
+    .totals tr.total-final td {
+      font-weight: 700;
+      font-size: 10px;
+      border-top: 1px solid #333;
+      border-bottom: none;
+      padding-top: 7px;
     }
 
-    .payment-info {
-      text-align: right;
-      font-size: 9px;
-      line-height: 1.8;
+    .notes {
+      margin-top: 16px;
+      font-size: 9.5px;
       color: #555;
+      line-height: 1.6;
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: 50px;
+      text-align: right;
+      font-size: 8.5px;
+      color: #777;
+      line-height: 1.9;
+      border-top: 1px solid #eee;
+      padding-top: 12px;
     }
   </style>
 </head>
 <body>
 
-  <!-- Header -->
-  <div class="header">
-    <table>
+  <!-- Header : spacer + contenu aligné sur le tableau -->
+  <table class="header-wrap">
+    <tbody>
       <tr>
-        <td width="25%">&nbsp;</td>
-        <td>
-          <div class="header-title">
-            <span>FACTURE</span>
-          </div>
-          <div class="header-invoice-number">
+        <td class="header-spacer"></td>
+        <td class="header-content">
+          <div class="header-title"><span>FACTURE</span></div>
+          <div class="header-number">
             <span>FACTURE #{{ invoice.number }} DATE {{ invoice.issued_at.strftime('%d/%m/%Y') }}</span>
           </div>
           {% if invoice.subject %}
-          <div class="header-object">
-            <span>Objet : {{ invoice.subject }}</span>
-          </div>
+          <div class="header-object">Objet : {{ invoice.subject }}</div>
           {% endif %}
         </td>
       </tr>
-    </table>
-  </div>
+    </tbody>
+  </table>
 
-  <!-- Main -->
-  <div class="main">
-    <table width="100%" valign="top">
+  <!-- Layout principal -->
+  <table class="main-layout">
+    <tbody>
       <tr>
         <!-- Sidebar -->
-        <td width="25%" class="side">
-          <span>Facturé par :</span><br><br>
-          <strong>{{ user.company_name or (user.first_name + ' ' + user.last_name) }}</strong><br><br>
-          {{ user.address }}<br>
-          {{ user.zip_code }} {{ user.city }}<br>
-          {% if user.phone %}{{ user.phone }}<br>{% endif %}
-          {{ user.email }}<br>
-          {% if user.website %}{{ user.website }}<br>{% endif %}
-          SIREN {{ user.siren }}<br>
-          <br>
-          <span>Facturé à :</span><br><br>
-          {% if invoice.client.company_name %}
-            <strong>{{ invoice.client.company_name }}</strong><br><br>
-            {% if invoice.client.address %}{{ invoice.client.address }}<br>{% endif %}
-            {% if invoice.client.zip_code and invoice.client.city %}{{ invoice.client.zip_code }} {{ invoice.client.city }}<br>{% endif %}
-            {% if invoice.client.contact_name or invoice.client.email %}<br>Contact :<br><br>{% endif %}
+        <td class="sidebar">
+          <div class="section">
+            <span class="section-label">Facturé par :</span>
+            <strong>{{ user.company_name or (user.first_name + ' ' + user.last_name) }}</strong><br>
+            {{ user.address }}<br>
+            {{ user.zip_code }}<br>
+            {{ user.city }}<br>
+            {% if user.phone %}{{ user.phone }}<br>{% endif %}
+            {{ user.email }}<br>
+            {% if user.website %}{{ user.website }}<br>{% endif %}
+            SIREN {{ user.siren }}
+          </div>
+
+          <div class="section">
+            <span class="section-label">Facturé à :</span>
+            {% if invoice.client.company_name %}
+              <strong>{{ invoice.client.company_name }}</strong><br>
+              {% if invoice.client.address %}{{ invoice.client.address }}<br>{% endif %}
+              {% if invoice.client.zip_code %}{{ invoice.client.zip_code }}<br>{% endif %}
+              {% if invoice.client.city %}{{ invoice.client.city }}<br>{% endif %}
+            {% else %}
+              <strong>{{ invoice.client.contact_name or invoice.client.name }}</strong><br>
+              {% if invoice.client.address %}{{ invoice.client.address }}<br>{% endif %}
+              {% if invoice.client.zip_code %}{{ invoice.client.zip_code }}<br>{% endif %}
+              {% if invoice.client.city %}{{ invoice.client.city }}<br>{% endif %}
+            {% endif %}
+          </div>
+
+          {% if invoice.client.company_name and (invoice.client.contact_name or invoice.client.email) %}
+          <div class="section">
+            <span class="section-label">Contact :</span>
             {% if invoice.client.contact_name %}{{ invoice.client.contact_name }}<br>{% endif %}
             {% if invoice.client.email %}{{ invoice.client.email }}<br>{% endif %}
-          {% else %}
-            <strong>{{ invoice.client.contact_name or invoice.client.name }}</strong><br><br>
-            {% if invoice.client.address %}{{ invoice.client.address }}<br>{% endif %}
-            {% if invoice.client.zip_code and invoice.client.city %}{{ invoice.client.zip_code }} {{ invoice.client.city }}<br>{% endif %}
-            {% if invoice.client.email %}{{ invoice.client.email }}<br>{% endif %}
+          </div>
+          {% elif not invoice.client.company_name and invoice.client.email %}
+          <div class="section">
+            {{ invoice.client.email }}<br>
+          </div>
           {% endif %}
+
           {% if invoice.due_date %}
-            <br>
-            <span>Échéance :</span><br><br>
+          <div class="section">
+            <span class="section-label">Échéance :</span>
             {{ invoice.due_date.strftime('%d/%m/%Y') }}
+          </div>
           {% endif %}
         </td>
 
-        <!-- Table -->
-        <td>
-          <table class="items-table" width="100%">
+        <!-- Contenu -->
+        <td class="content">
+          <table class="items-table">
             <thead>
               <tr>
                 <th>Désignation</th>
-                <th class="price" width="12%">PU HT</th>
-                <th class="qty" width="8%">Qté</th>
-                <th class="qty" width="10%">Unité</th>
-                <th class="amount" width="12%">Total HT</th>
+                <th class="right" width="11%">PU HT</th>
+                <th class="right" width="7%">Qté</th>
+                <th class="right" width="9%">Unité</th>
+                <th class="right" width="12%">Prix HT</th>
               </tr>
-              <tr><td colspan="5" class="border"></td></tr>
             </thead>
             <tbody>
               {% for line in invoice.lines %}
@@ -218,70 +244,53 @@
                 <td>
                   {{ line.description }}
                   {% if line.discount_percent %}
-                    <br><small><em>— Remise : {{ '%.0f'|format(line.discount_percent) }} %</em></small>
+                  — <em>Remise : {{ '%.0f'|format(line.discount_percent) }} %</em>
                   {% endif %}
                 </td>
-                <td class="price">{{ '%.2f'|format(line.unit_price) }} €</td>
-                <td class="qty">{{ line.quantity }}</td>
-                <td class="qty">{{ line.unit or '—' }}</td>
-                <td class="amount">{{ '%.2f'|format(total) }} €</td>
+                <td class="right">{{ '%.2f'|format(line.unit_price) }} €</td>
+                <td class="right">{{ line.quantity }}</td>
+                <td class="right">{{ line.unit or '' }}</td>
+                <td class="right">{{ '%.2f'|format(total) }} €</td>
               </tr>
               {% endfor %}
-              <tr><td colspan="5">&nbsp;</td></tr>
-              <tr><td colspan="5">&nbsp;</td></tr>
             </tbody>
+          </table>
 
-            {% set total_ht = namespace(value=0) %}
-            {% for line in invoice.lines %}
-              {% set base = line.quantity * line.unit_price %}
-              {% set discount = (base * line.discount_percent / 100) if line.discount_percent else 0 %}
-              {% set total_ht.value = total_ht.value + base - discount %}
-            {% endfor %}
+          {% set total_ht = namespace(value=0) %}
+          {% for line in invoice.lines %}
+            {% set base = line.quantity * line.unit_price %}
+            {% set discount = (base * line.discount_percent / 100) if line.discount_percent else 0 %}
+            {% set total_ht.value = total_ht.value + base - discount %}
+          {% endfor %}
 
-            <tfoot>
-              <tr><td colspan="5" class="border"></td></tr>
-              <tr>
-                <td colspan="4">Total HT</td>
-                <td class="amount">{{ '%.2f'|format(total_ht.value) }} €</td>
-              </tr>
-              <tr><td colspan="5" class="border light"></td></tr>
-              <tr>
-                <td colspan="4">TVA</td>
-                <td class="amount">N/A</td>
-              </tr>
-              <tr><td colspan="5" class="border light"></td></tr>
-              <tr>
-                <td colspan="4"><strong>Total TTC</strong></td>
-                <td class="amount"><strong>{{ '%.2f'|format(total_ht.value) }} €</strong></td>
-              </tr>
-            </tfoot>
+          <table class="totals">
+            <tr>
+              <td>Total HT</td>
+              <td class="right">{{ '%.2f'|format(total_ht.value) }} €</td>
+            </tr>
+            <tr>
+              <td>TVA</td>
+              <td class="right">N/A</td>
+            </tr>
+            <tr class="total-final">
+              <td>Total TTC</td>
+              <td class="right">{{ '%.2f'|format(total_ht.value) }} €</td>
+            </tr>
           </table>
 
           {% if invoice.notes %}
-          <div style="margin-top:20px; font-size:10px; color:#555; line-height:1.6;">
-            <strong>Notes :</strong> {{ invoice.notes }}
-          </div>
+          <div class="notes"><strong>Notes :</strong> {{ invoice.notes }}</div>
           {% endif %}
         </td>
       </tr>
-    </table>
-  </div>
+    </tbody>
+  </table>
 
-  <!-- Footer -->
   <div class="footer">
-    <table width="100%">
-      <tr>
-        <td width="25%">&nbsp;</td>
-        <td>
-          <div class="payment-info">
-            À payer sous 30 jours à réception de la facture, par virement.<br>
-            {% if user.iban %}IBAN : {{ user.iban }}<br>{% endif %}
-            En cas de retard de paiement, indemnité forfaitaire légale pour frais de recouvrement : 40,00 €<br>
-            TVA non applicable, art. 293 B du CGI
-          </div>
-        </td>
-      </tr>
-    </table>
+    À payer sous 30 jours à réception de la facture, par virement.<br>
+    {% if user.iban %}IBAN : {{ user.iban }}<br>{% endif %}
+    En cas de retard de paiement, indemnité forfaitaire légale pour frais de recouvrement : 40,00€<br>
+    TVA non applicable, art. 293 B du CGI
   </div>
 
 </body>
